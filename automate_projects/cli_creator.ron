@@ -1,0 +1,6 @@
+Config(
+    paths: [
+        "rust_universal",
+        // Ajoutez d'autres chemins relatifs ici
+    ]
+)
