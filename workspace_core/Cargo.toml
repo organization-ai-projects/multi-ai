@@ -7,3 +7,5 @@ edition = "2024"
 ron = "0.8"
 serde = { version = "1.0", features = ["derive"] }
 toml = "0.5"
+clap = { version = "4.0", features = ["derive"] }
+uuid = { version = "1.6", features = ["v7", "serde"] }
