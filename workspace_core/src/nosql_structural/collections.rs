@@ -1,11 +1,12 @@
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
 use uuid::Uuid;
 use std::collections::HashMap;
 use super::references::DbRef;
 use super::error::{DatabaseError, Result};
 use super::cache::QueryCache;
 use std::num::NonZeroUsize;
-use serde_json::Value;
+use super::document::Document;
 
 // Structure de base d'une collection dans notre système
 #[derive(Debug, Deserialize, Serialize, Clone)]
@@ -15,16 +16,6 @@ pub struct Collection<T> {
     pub documents: Vec<Document<T>>,
     pub indexes: HashMap<String, Index>,
     cached_fields: HashMap<String, QueryCache<String, Vec<Uuid>>>, // Ajout du cache
-}
-
-// Structure de base d'un document
-#[derive(Debug, Deserialize, Serialize, Clone)]
-pub struct Document<T> {
-    pub _id: Uuid,           // ID géré par la couche structurelle
-    pub created_at: i64,     // Métadonnées techniques
-    pub updated_at: i64,     // Métadonnées techniques
-    pub data: T,            // Les données métier du schéma
-    pub references: Option<Vec<DbRef>>,
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
@@ -75,11 +66,9 @@ impl<T: serde::Serialize> Collection<T> {
     fn build_cache_for_field(&mut self, field: &str) -> Result<()> {
         let cache = QueryCache::new(NonZeroUsize::new(1000).unwrap());
         
-        // Construire l'index pour le champ spécifié
         for doc in &self.documents {
             if let Some(value) = doc.get_field_value(field) {
-                let existing = cache.get(&value)
-                    .unwrap_or_default();
+                let existing = cache.get(&value).unwrap_or_default();
                 let mut ids = existing;
                 ids.push(doc._id);
                 cache.insert(value, ids);
@@ -102,25 +91,9 @@ impl<T: serde::Serialize> Collection<T> {
         }
         None
     }
-
-    pub fn get_field_value(&self, field: &str) -> Option<String> {
-        // Convertir T en Value pour un accès dynamique aux champs
-        match serde_json::to_value(&self.data) {
-            Ok(Value::Object(map)) => {
-                map.get(field).and_then(|v| match v {
-                    Value::String(s) => Some(s.clone()),
-                    Value::Number(n) => Some(n.to_string()),
-                    Value::Bool(b) => Some(b.to_string()),
-                    Value::Array(a) => Some(serde_json::to_string(a).unwrap_or_default()),
-                    _ => None,
-                })
-            },
-            _ => None
-        }
-    }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct IndexOptions {
     pub unique: bool,
     pub sparse: bool,
