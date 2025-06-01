@@ -8,14 +8,9 @@ use std::path::Path;
 use uuid::Uuid;
 
 pub fn init_workspace(name: String) -> Result<(), String> {
-    let collection = Collection::<ProjectDocument> {
-        _id: Uuid::now_v7(),
-        name,
-        documents: Vec::new(),
-        indexes: HashMap::new(),
-        references: Vec::new(),
-    };
-
+    let mut collection = ProjectsCollection::new_workspace();
+    collection.name = name;
+    
     let storage = StorageManager::new(Path::new(".").to_path_buf());
     storage.save(&collection)?;
     Ok(())
@@ -24,23 +19,17 @@ pub fn init_workspace(name: String) -> Result<(), String> {
 pub fn scan_workspace(collection: &Collection<ProjectDocument>) -> Result<(), String> {
     let mut updated_collection = collection.clone();
     
-    for path in &collection.scan_paths {
-        let found_projects = scanner::scan_projects(Path::new(path), &collection.excluded_paths);
-        updated_collection.documents.extend(
-            found_projects.into_iter()
-                .map(|p| p.document)
-        );
-    }
-    
-    // Sauvegarde de la collection mise à jour
-    let content = ron::ser::to_string_pretty(&updated_collection, PrettyConfig::default())
-        .map_err(|e| format!("Erreur sérialisation : {}", e))?;
+    let found_projects: Vec<_> = collection.scan_paths.iter()
+        .flat_map(|path| scanner::scan_projects(Path::new(path), &collection.excluded_paths))
+        .collect();
 
-    fs::write("workspace.ron", content)
-        .map_err(|e| format!("Erreur écriture : {}", e))?;
+    updated_collection.documents = found_projects.into_iter()
+        .map(|p| p.document)
+        .collect();
 
     let storage = StorageManager::new(Path::new(".").to_path_buf());
     storage.save(&updated_collection)?;
+    
     println!("✅ {} projets trouvés et sauvegardés", updated_collection.documents.len());
     Ok(())
 }

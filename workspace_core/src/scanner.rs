@@ -52,3 +52,9 @@ fn scan_dir_recursive(path: &Path, excluded: &[String], found: &mut Vec<ScannedP
         }
     }
 }
+
+pub fn scan_projects(path: &Path, excluded: &[String]) -> Vec<ScannedProject> {
+    let mut found = Vec::new();
+    scan_dir_recursive(path, excluded, &mut found);
+    found
+}

@@ -43,13 +43,7 @@ fn main() {
             let storage = StorageManager::new(Path::new(".").to_path_buf());
             let collection = storage
                 .load::<schema::ProjectDocument>("workspace", true)
-                .unwrap_or_else(|_| Collection {
-                    _id: Uuid::now_v7(),
-                    name: "workspace".to_string(),
-                    documents: Vec::new(),
-                    indexes: HashMap::new(),
-                    references: Vec::new(),
-                });
+                .unwrap_or_else(|_| ProjectsCollection::new_workspace());
 
             if let Err(e) = commands::scan_workspace(&collection) {
                 eprintln!("Erreur scan : {}", e);
@@ -60,7 +54,7 @@ fn main() {
                 if let Ok(collection) = from_str::<Collection<ProjectDocument>>(&content) {
                     println!("\nProjets dans la collection {} :", collection.name);
                     for doc in collection.documents {
-                        println!("• {} ({:?})", doc.name, doc._id);
+                        println!("• {} ({:?})", doc.data.name, doc._id);
                     }
                 }
             }

@@ -37,15 +37,13 @@ impl StorageManager {
         let path = if human_readable {
             self.base_path.join(format!("{}.ron", collection_name))
         } else {
-            // Vérifie si le binaire est plus récent que le RON
             let bin_path = self.base_path.join(format!("{}.bin", collection_name));
             let ron_path = self.base_path.join(format!("{}.ron", collection_name));
             
             if self.is_binary_fresh(&bin_path, &ron_path) {
                 bin_path
             } else {
-                // Si le binaire n'est pas à jour, on le régénère
-                self.sync_binary_from_ron(collection_name)?;
+                self.sync_binary_from_ron::<T>(collection_name)?;
                 bin_path
             }
         };
@@ -75,7 +73,7 @@ impl StorageManager {
     }
 
     // Synchronise le binaire depuis le RON
-    fn sync_binary_from_ron<T: serde::de::DeserializeOwned>(&self, collection_name: &str) -> Result<(), String> {
+    fn sync_binary_from_ron<T: serde::de::DeserializeOwned + serde::Serialize>(&self, collection_name: &str) -> Result<(), String> {
         let collection = self.load::<T>(collection_name, true)?;
         let bin_content = serialize(&collection)
             .map_err(|e| format!("Erreur sérialisation binaire : {}", e))?;
