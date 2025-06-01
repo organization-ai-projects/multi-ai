@@ -1,11 +1,16 @@
 mod commands;
 mod scanner;
 mod schema;
+mod nosql_structural;
 
+use std::collections::HashMap;
 use clap::{Parser, Subcommand};
-use schema::{Collection, Document};
+use crate::nosql_structural::{collections::Collection, storage::StorageManager};
+use crate::schema::ProjectDocument;
 use ron::de::from_str;
 use std::fs;
+use std::path::Path;
+use uuid::Uuid;
 
 #[derive(Parser)]
 #[command(name = "workspace")]
@@ -35,17 +40,24 @@ fn main() {
             }
         }
         Commands::Scan => {
-            if let Ok(content) = fs::read_to_string("workspace.ron") {
-                if let Ok(collection) = from_str::<Collection>(&content) {
-                    if let Err(e) = commands::scan_workspace(&collection) {
-                        eprintln!("Erreur scan : {}", e);
-                    }
-                }
+            let storage = StorageManager::new(Path::new(".").to_path_buf());
+            let collection = storage
+                .load::<schema::ProjectDocument>("workspace", true)
+                .unwrap_or_else(|_| Collection {
+                    _id: Uuid::now_v7(),
+                    name: "workspace".to_string(),
+                    documents: Vec::new(),
+                    indexes: HashMap::new(),
+                    references: Vec::new(),
+                });
+
+            if let Err(e) = commands::scan_workspace(&collection) {
+                eprintln!("Erreur scan : {}", e);
             }
         }
         Commands::List => {
             if let Ok(content) = fs::read_to_string("workspace.ron") {
-                if let Ok(collection) = from_str::<Collection>(&content) {
+                if let Ok(collection) = from_str::<Collection<ProjectDocument>>(&content) {
                     println!("\nProjets dans la collection {} :", collection.name);
                     for doc in collection.documents {
                         println!("• {} ({:?})", doc.name, doc._id);

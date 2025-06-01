@@ -1,21 +1,21 @@
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct DbRef {
     pub collection: String,
     pub doc_id: Uuid,
     pub ref_type: RefType,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub enum RefType {
     OneToOne,
     OneToMany,
     ManyToMany,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct ForeignKey {
     pub from: DbRef,
     pub to: DbRef,

@@ -1,13 +1,14 @@
-use crate::nosql_structural::{
-    collections::Collection,
-    storage::StorageManager
-};
+use crate::nosql_structural::{collections::Collection, storage::StorageManager};
+use crate::scanner;
+use crate::schema::ProjectDocument;
+use ron::ser::PrettyConfig;
+use std::collections::HashMap;
+use std::fs;
 use std::path::Path;
 use uuid::Uuid;
-use std::time::{SystemTime, UNIX_EPOCH};
 
 pub fn init_workspace(name: String) -> Result<(), String> {
-    let collection = Collection {
+    let collection = Collection::<ProjectDocument> {
         _id: Uuid::now_v7(),
         name,
         documents: Vec::new(),
@@ -20,7 +21,7 @@ pub fn init_workspace(name: String) -> Result<(), String> {
     Ok(())
 }
 
-pub fn scan_workspace(collection: &Collection) -> Result<(), String> {
+pub fn scan_workspace(collection: &Collection<ProjectDocument>) -> Result<(), String> {
     let mut updated_collection = collection.clone();
     
     for path in &collection.scan_paths {
