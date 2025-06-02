@@ -1,0 +1,17 @@
+(
+    rules: [
+        "must_start_with: fn",
+        "must_have: main",
+        "valid_molecules: molecules.ron",
+        "max_molecules: 10"
+    ],
+    intervals: {
+        "mutation": 5000,
+        "observation": 1000
+    },
+    paths: {
+        "candidates": "../laboratory/candidates",
+        "memory_state": "../laboratory/memory/state",
+        "memory_bin": "../laboratory/memory/binary"
+    }
+)

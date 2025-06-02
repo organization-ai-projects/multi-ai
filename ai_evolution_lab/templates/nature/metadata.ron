@@ -1,0 +1,6 @@
+(
+    id: "",  // Sera généré lors de l'initialisation
+    kind: "nature",
+    description: "Environnement d'évolution des formes de vie",
+    version: "0.1.0"
+)

@@ -1,0 +1,11 @@
+(
+    id: "",  // Sera généré lors de l'initialisation
+    kind: "scientist",
+    description: "IA d'observation et d'analyse",
+    version: "0.1.0",
+    paths: {
+        "observation": "../nature/environment",
+        "laboratory": "./laboratory",
+        "memory": "./memory"
+    }
+)
