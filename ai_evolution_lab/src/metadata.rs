@@ -1,35 +1,39 @@
 use std::fs;
+use serde::{Serialize, de::DeserializeOwned};
 use crate::models::{GlobalMetadata, IaList};
-use bincode;
+
+fn load_or_init<T, F>(filename: &str, init: F) -> T 
+where 
+    T: DeserializeOwned,
+    F: FnOnce() -> T
+{
+    if let Ok(data) = fs::read(filename) {
+        bincode::deserialize(&data).unwrap_or_else(|_| init())
+    } else {
+        let data = init();
+        save(&data, filename);
+        data
+    }
+}
+
+fn save<T: Serialize>(data: &T, filename: &str) {
+    if let Ok(bytes) = bincode::serialize(data) {
+        let _ = fs::write(filename, bytes);
+    }
+}
 
 pub fn load_or_init_global_metadata() -> GlobalMetadata {
-    if let Ok(data) = fs::read("metadata.bin") {
-        bincode::deserialize(&data).unwrap_or_default()
-    } else {
-        let metadata = GlobalMetadata::default();
-        save_global_metadata(&metadata);
-        metadata
-    }
+    load_or_init("metadata.bin", GlobalMetadata::default)
 }
 
 pub fn save_global_metadata(metadata: &GlobalMetadata) {
-    if let Ok(data) = bincode::serialize(metadata) {
-        let _ = fs::write("metadata.bin", data);
-    }
+    save(metadata, "metadata.bin")
 }
 
 pub fn load_or_init_ia_list() -> IaList {
-    if let Ok(data) = fs::read("ia_list.bin") {
-        bincode::deserialize(&data).unwrap_or_else(|_| crate::setup::generate_initial_metadata())
-    } else {
-        let list = crate::setup::generate_initial_metadata();
-        save_ia_list(&list);
-        list
-    }
+    load_or_init("ia_list.bin", crate::setup::generate_initial_metadata)
 }
 
 pub fn save_ia_list(list: &IaList) {
-    if let Ok(data) = bincode::serialize(list) {
-        let _ = fs::write("ia_list.bin", data);
-    }
+    save(list, "ia_list.bin")
 }
