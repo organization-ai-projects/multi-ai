@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use chrono;
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Serialize)]  // Ajout de Serialize
 pub struct IaList {
     pub nature: Vec<String>,
     pub scientist: Vec<String>,
