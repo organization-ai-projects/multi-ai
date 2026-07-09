@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
 
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Clone, Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 pub struct KnowledgeGraph {
     pub nodes: HashSet<String>,
     pub edges: HashMap<String, HashSet<String>>, // mot -> ensemble de voisins

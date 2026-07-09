@@ -15,7 +15,7 @@ use std::sync::Arc;
 use std::thread;
 use std::time::Duration;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 struct Config {
     id: String,
     kind: String,

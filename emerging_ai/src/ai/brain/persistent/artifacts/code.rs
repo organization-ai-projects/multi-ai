@@ -8,13 +8,13 @@ use ron::de::from_str;
 
 impl MemoryCode {
     pub fn save_to_bin(&self, path: &Path) -> std::io::Result<()> {
-        let serialized = bincode::serialize(self)?;
+        let serialized = bincode_next::encode_to_vec(self, bincode_next::config::standard())?;
         fs::write(path, serialized)
     }
 
     pub fn load_from_bin(path: &Path) -> std::io::Result<Self> {
         let data = fs::read(path)?;
-        let deserialized: MemoryCode = bincode::deserialize(&data)?;
+        let deserialized: MemoryCode = bincode_next::decode_from_slice(&data, bincode_next::config::standard()).map(|(v, _)| v)?;
         Ok(deserialized)
     }
 

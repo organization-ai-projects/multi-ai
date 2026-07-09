@@ -7,7 +7,7 @@ use rand::Rng; // Ajout de rand::Rng
 
 const TIMEOUT_SECONDS: u64 = 300; // 5 minutes pour prouver sa valeur
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 pub struct AgentMetadata {
     pub id: String,
     pub short_id: String,
@@ -25,7 +25,7 @@ pub struct AgentState {
     pub successful_runs: u32,
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, bincode_next::Encode, bincode_next::Decode)]
 struct Objective {
     name: String,
     description: String,

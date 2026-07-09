@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 use super::super::error::Result;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 pub struct User {
     id: Uuid,
     username: String,

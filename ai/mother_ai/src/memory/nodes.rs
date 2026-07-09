@@ -2,7 +2,7 @@
 use serde::{Serialize, Deserialize};
 use std::collections::HashMap;
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, bincode_next::Encode, bincode_next::Decode)]
 pub(crate) struct Node {
     pub(crate) id: String,
     pub(crate) label: String,

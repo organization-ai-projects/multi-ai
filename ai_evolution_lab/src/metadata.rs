@@ -5,12 +5,12 @@ use crate::models::{GlobalMetadata, IaList};
 
 fn load_or_init<T, F>(filename: &str, init: F, project_base: &Path) -> T 
 where 
-    T: DeserializeOwned + Serialize,
+    T: DeserializeOwned + Serialize + bincode_next::Decode<()> + bincode_next::Encode,
     F: FnOnce(&Path) -> T
 {
     let path = project_base.join(filename);
     if let Ok(data) = fs::read(&path) {
-        bincode::deserialize(&data).unwrap_or_else(|_| init(project_base))
+        bincode_next::decode_from_slice(&data, bincode_next::config::standard()).map(|(v, _)| v).unwrap_or_else(|_| init(project_base))
     } else {
         let data = init(project_base);
         save(&data, &path);
@@ -18,8 +18,8 @@ where
     }
 }
 
-fn save<T: Serialize>(data: &T, path: &Path) {
-    if let Ok(bytes) = bincode::serialize(data) {
+fn save<T: Serialize + bincode_next::Encode>(data: &T, path: &Path) {
+    if let Ok(bytes) = bincode_next::encode_to_vec(data, bincode_next::config::standard()) {
         let _ = fs::write(path, bytes);
     }
 }

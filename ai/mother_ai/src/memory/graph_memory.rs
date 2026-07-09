@@ -64,7 +64,7 @@ impl GraphMemory {
         match format {
             "ron" => ron::ser::to_writer(file, data)
                 .map_err(|e| MemoryError::SerializationError(e.to_string()))?,
-            "bin" => bincode::serialize_into(file, data)
+            "bin" => bincode_next::encode_into_std_write(data, &mut file, bincode_next::config::standard())
                 .map_err(|e| MemoryError::SerializationError(e.to_string()))?,
             _ => return Err(MemoryError::InvalidPath(format!("Format inconnu : {}", format))),
         }
@@ -77,7 +77,7 @@ impl GraphMemory {
         match format {
             "ron" => ron::de::from_reader(file)
                 .map_err(|e| MemoryError::DeserializationError(e.to_string())),
-            "bin" => bincode::deserialize_from(file)
+            "bin" => bincode_next::decode_from_std_read(&mut file, bincode_next::config::standard())
                 .map_err(|e| MemoryError::DeserializationError(e.to_string())),
             _ => Err(MemoryError::InvalidPath(format!("Format inconnu : {}", format))),
         }
@@ -259,7 +259,7 @@ impl GraphMemory {
         };
 
         let file = BufWriter::new(File::create(&snapshot_file)?);
-        bincode::serialize_into(file, &graph)
+        bincode_next::encode_into_std_write(&graph, &mut file, bincode_next::config::standard())
             .map_err(|e| MemoryError::SerializationError(e.to_string()))?;
 
         Ok(())
@@ -272,7 +272,7 @@ impl GraphMemory {
 
         if Path::new(&snapshot_file).exists() {
             let reader = BufReader::new(File::open(&snapshot_file)?);
-            let graph: SerializableGraph = bincode::deserialize_from(reader)
+            let graph: SerializableGraph = bincode_next::decode_from_std_read(&mut reader, bincode_next::config::standard())
                 .map_err(|e| MemoryError::DeserializationError(e.to_string()))?;
             return self.restore(graph);
         }

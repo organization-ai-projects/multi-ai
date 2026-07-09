@@ -5,7 +5,7 @@ use std::fs::File;
 use std::io::{BufReader, Read};
 use std::fs::OpenOptions;
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, bincode_next::Encode, bincode_next::Decode)]
 pub struct AiEvent {
     pub snapshot_id: String,
     pub impact: String,
@@ -14,7 +14,7 @@ pub struct AiEvent {
     pub human_validated: bool,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, bincode_next::Encode, bincode_next::Decode)]
 pub struct AiGraph {
     pub nodes: HashMap<String, AiEvent>, // ID de l'événement -> événement
     pub links: HashSet<(String, String)>, // Liens entre événements (ID -> ID)
@@ -92,13 +92,13 @@ impl AiGraph {
 
     pub fn save_to_bin(&self, path: &str) -> Result<(), Box<dyn std::error::Error>> {
         let file = OpenOptions::new().write(true).create(true).open(path)?;
-        bincode::serialize_into(file, self)?;
+        bincode_next::encode_into_std_write(self, &mut file, bincode_next::config::standard())?;
         Ok(())
     }
 
     pub fn load_from_bin(path: &str) -> Result<Self, Box<dyn std::error::Error>> {
         let file = OpenOptions::new().read(true).open(path)?;
-        let graph: AiGraph = bincode::deserialize_from(file)?;
+        let graph: AiGraph = bincode_next::decode_from_std_read(&mut file, bincode_next::config::standard())?;
         Ok(graph)
     }
 
@@ -124,13 +124,13 @@ impl AiGraph {
         // Format binaire pour l'IA
         let bin_path = ".ai_memory/memory.bin";
         let bin_file = OpenOptions::new().write(true).create(true).open(bin_path)?;
-        bincode::serialize_into(bin_file, self)?;
+        bincode_next::encode_into_std_write(self, &mut bin_file, bincode_next::config::standard())?;
         Ok(())
     }
 
     pub fn load_memory() -> Option<Self> {
         if let Ok(file) = File::open(".ai_memory/memory.bin") {
-            if let Ok(graph) = bincode::deserialize_from(BufReader::new(file)) {
+            if let Ok(graph) = bincode_next::decode_from_std_read(&mut BufReader::new(file), bincode_next::config::standard()) {
                 return Some(graph);
             }
         }

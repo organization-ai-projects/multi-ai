@@ -12,7 +12,7 @@ fn main() {
     loop {
         // 1. Lire l'entrée (input.bin)
         let input = match fs::read("input.bin") {
-            Ok(data) => bincode::deserialize(&data).unwrap_or_default(),
+            Ok(data) => bincode_next::decode_from_slice(&data, bincode_next::config::standard()).map(|(v, _)| v).unwrap_or_default(),
             Err(_) => Vec::<f64>::new(),
         };
 
@@ -24,7 +24,7 @@ fn main() {
         };
 
         // 3. Écrire la sortie
-        if let Ok(data) = bincode::serialize(&output) {
+        if let Ok(data) = bincode_next::encode_to_vec(&output, bincode_next::config::standard()) {
             let _ = fs::write("output.bin", data);
         }
 

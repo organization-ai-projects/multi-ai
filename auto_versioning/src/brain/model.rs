@@ -12,7 +12,7 @@ pub struct VersioningBrain {
     pub tree_learner: Option<DecisionTreeLearner>, // Add tree_learner field
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 pub struct PatternStats {
     pub signature: String,
     pub occurrences: u32,
@@ -21,7 +21,7 @@ pub struct PatternStats {
     pub last_contexts: Vec<String>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 pub struct ErrorRecord {
     pub pattern: String,
     pub predicted_impact: String,
@@ -30,7 +30,7 @@ pub struct ErrorRecord {
     pub timestamp: i64,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 pub struct SuccessPattern {
     pub pattern: String,
     pub context: String,

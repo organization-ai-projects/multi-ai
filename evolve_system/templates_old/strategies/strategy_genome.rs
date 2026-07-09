@@ -8,7 +8,7 @@ pub struct StrategyGenome {
 
 impl StrategyGenome {
     pub fn new_random(rng: &mut impl Rng) -> Self {
-        let len = rng.gen_range(1..=5);
+        let len = rng.random_range(1..=5);
         let ops = (0..len)
             .map(|_| Op::all().choose(rng).unwrap().clone())
             .collect();
@@ -37,20 +37,20 @@ impl StrategyGenome {
 
     /// Mutation : remplace, insère ou supprime une opération
     pub fn mutate(&mut self, rng: &mut impl Rng) {
-        if self.ops.is_empty() || rng.gen_bool(0.3) {
+        if self.ops.is_empty() || rng.random_bool(0.3) {
             // Ajouter une op
             self.ops.insert(
-                rng.gen_range(0..=self.ops.len()),
+                rng.random_range(0..=self.ops.len()),
                 Op::all().choose(rng).unwrap().clone(),
             );
         }
-        if !self.ops.is_empty() && rng.gen_bool(0.3) {
+        if !self.ops.is_empty() && rng.random_bool(0.3) {
             // Modifier une op existante
-            self.ops[rng.gen_range(0..self.ops.len())] = Op::all().choose(rng).unwrap().clone();
+            self.ops[rng.random_range(0..self.ops.len())] = Op::all().choose(rng).unwrap().clone();
         }
-        if self.ops.len() > 1 && rng.gen_bool(0.2) {
+        if self.ops.len() > 1 && rng.random_bool(0.2) {
             // Supprimer une op
-            self.ops.remove(rng.gen_range(0..self.ops.len()));
+            self.ops.remove(rng.random_range(0..self.ops.len()));
         }
     }
 
@@ -61,7 +61,7 @@ impl StrategyGenome {
         let blen = b.ops.len();
         let len = alen.max(blen);
         for i in 0..len {
-            if rng.gen_bool(0.5) {
+            if rng.random_bool(0.5) {
                 if i < alen {
                     ops.push(a.ops[i].clone());
                 }

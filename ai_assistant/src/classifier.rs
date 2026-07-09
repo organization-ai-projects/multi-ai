@@ -2,7 +2,7 @@ use crate::graph_memory::AiGraph;
 use serde_json::Value;
 use serde::{Serialize, Deserialize};
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, bincode_next::Encode, bincode_next::Decode)]
 pub enum Impact {
     Patch,
     Minor,

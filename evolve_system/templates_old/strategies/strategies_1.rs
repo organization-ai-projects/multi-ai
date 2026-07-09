@@ -4,7 +4,7 @@ use rand::{seq::SliceRandom, Rng};
 use serde::{Deserialize, Serialize};
 
 // Représente une primitive (opération/unité de logique de base)
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 pub enum Primitive {
     Add(f64),       // Additionne une constante
     Mul(f64),       // Multiplie par une constante
@@ -14,7 +14,7 @@ pub enum Primitive {
 }
 
 // Un pipeline (= stratégie candidate)
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 pub struct Strategy {
     pub pipeline: Vec<Primitive>,
     pub fitness: f64,
@@ -38,17 +38,17 @@ impl Strategy {
     }
 
     pub fn mutate(&self) -> Self {
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         let mut new_pipeline = self.pipeline.clone();
 
         // Mutation simple : ajoute/enlève/mute une primitive
-        match rng.gen_range(0..4) {
+        match rng.random_range(0..4) {
             0 if new_pipeline.len() > 1 => {
-                new_pipeline.remove(rng.gen_range(0..new_pipeline.len()));
+                new_pipeline.remove(rng.random_range(0..new_pipeline.len()));
             }
             1 => {
                 // Ajout d'une primitive aléatoire
-                new_pipeline.insert(rng.gen_range(0..=new_pipeline.len()), Primitive::random());
+                new_pipeline.insert(rng.random_range(0..=new_pipeline.len()), Primitive::random());
             }
             2 => {
                 // Mutation d'un paramètre
@@ -58,7 +58,7 @@ impl Strategy {
             }
             3 => {
                 // Synthèse d'une nouvelle primitive (méta-mutation)
-                if rng.gen_bool(0.2) {
+                if rng.random_bool(0.2) {
                     new_pipeline.push(Primitive::Custom("generated_code_xyz".to_string()));
                 }
             }
@@ -76,11 +76,11 @@ impl Strategy {
 
 impl Primitive {
     pub fn random() -> Self {
-        let mut rng = rand::thread_rng();
-        match rng.gen_range(0..3) {
-            0 => Primitive::Add(rng.gen_range(-10.0..10.0)),
-            1 => Primitive::Mul(rng.gen_range(0.1..3.0)),
-            2 => Primitive::Threshold(rng.gen_range(-5.0..5.0)),
+        let mut rng = rand::rng();
+        match rng.random_range(0..3) {
+            0 => Primitive::Add(rng.random_range(-10.0..10.0)),
+            1 => Primitive::Mul(rng.random_range(0.1..3.0)),
+            2 => Primitive::Threshold(rng.random_range(-5.0..5.0)),
             _ => Primitive::Add(1.0),
         }
     }

@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use serde::{Serialize, Deserialize};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 pub enum Modifier {
     Ref,
     Mut,
@@ -20,7 +20,7 @@ impl std::fmt::Display for Modifier {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 pub struct DslType {
     pub base: String,
     pub modifier: Modifier,

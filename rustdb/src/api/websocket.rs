@@ -1,12 +1,12 @@
-use tokio::net::{TcpListener, TcpStream};
-use tokio_tungstenite::{accept_async, WebSocketStream};
+use crate::core::Database;
 use futures_util::{SinkExt, StreamExt};
 use serde_json::{Value, json};
-use crate::core::Database;
+use tokio::net::{TcpListener, TcpStream};
+use tokio_tungstenite::{WebSocketStream, accept_async};
 
 pub async fn start_websocket_server(database: Database, addr: &str) {
     let listener = TcpListener::bind(addr).await.expect("Failed to bind");
-    
+
     while let Ok((stream, _)) = listener.accept().await {
         let db = database.clone();
         tokio::spawn(async move {
@@ -15,7 +15,7 @@ pub async fn start_websocket_server(database: Database, addr: &str) {
     }
 }
 
-async fn handle_connection(stream: TcpStream, db: Database) {
+pub(crate) async fn handle_connection(stream: TcpStream, db: Database) {
     let ws_stream = accept_async(stream).await.expect("Failed to accept");
     let (mut write, mut read) = ws_stream.split();
 
@@ -40,18 +40,19 @@ async fn handle_message(db: &Database, message: String) -> String {
                     } else {
                         json!({"status": "error", "message": "Missing collection name"})
                     }
-                },
+                }
                 Some("insert") => {
                     // Handle insert
                     json!({"status": "success", "message": "Document inserted"})
-                },
+                }
                 Some("query") => {
                     // Handle query
                     json!({"status": "success", "message": "Query executed"})
-                },
+                }
                 _ => json!({"status": "error", "message": "Unknown command"}),
             }
-        },
+        }
         Err(e) => json!({"status": "error", "message": format!("Invalid JSON: {}", e)}),
-    }.to_string()
+    }
+    .to_string()
 }

@@ -2,9 +2,8 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use std::env;
 use serde::{Serialize, Deserialize};
-use bincode; // Import pour la sérialisation binaire
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 struct IaConfig {
     name: String,
     memory_path: String,
@@ -126,7 +125,7 @@ fn save_bin_config(workspace_root: &Path, ias: &[IaConfig]) {
         panic!("Impossible de créer le répertoire: {}", e);
     });
 
-    let bin_data = bincode::serialize(&ias).expect("Erreur lors de la sérialisation binaire");
+    let bin_data = bincode_next::encode_to_vec(&ias, bincode_next::config::standard()).expect("Erreur lors de la sérialisation binaire");
     fs::write(&config_path, bin_data).expect("Erreur lors de l'écriture du fichier binaire");
     println!("✅ Fichier binaire de configuration créé: {}", config_path.display());
 }

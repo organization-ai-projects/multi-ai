@@ -3,7 +3,7 @@ use uuid::Uuid;
 
 //contient les artéfacts de code de l'IA.
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, bincode_next::Encode, bincode_next::Decode)]
 pub struct MemoryCode {
     pub uuid: Uuid,
     pub code: String,          // Contenu du code

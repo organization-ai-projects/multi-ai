@@ -24,11 +24,11 @@ impl AstMutator {
 
 impl MutationProvider for AstMutator {
     fn mutate(&self, code: &str, max_mutations: usize) -> MutationResult {
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         let mut mutated = code.to_string();
         let mut mutations_applied = 0;
 
-        while mutations_applied < max_mutations && rng.gen_bool(self.mutation_rate) {
+        while mutations_applied < max_mutations && rng.random_bool(self.mutation_rate) {
             if let Some((pattern, replacement)) = self.patterns.choose(&mut rng) {
                 if mutated.contains(pattern) {
                     mutated = mutated.replacen(pattern, replacement, 1);

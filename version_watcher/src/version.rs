@@ -1,7 +1,7 @@
 use serde::{Serialize, Deserialize};
 use crate::graph::Impact;
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, bincode_next::Encode, bincode_next::Decode)]
 pub struct VersionSnapshot {
     pub id: String,
     pub timestamp: i64,

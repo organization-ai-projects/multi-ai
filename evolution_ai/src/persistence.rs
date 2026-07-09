@@ -6,7 +6,7 @@ use ron::ser::to_string_pretty; // Import explicite
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, fs};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 pub struct Checkpoint {
     pub generation: usize,
     pub timestamp: DateTime<Utc>,

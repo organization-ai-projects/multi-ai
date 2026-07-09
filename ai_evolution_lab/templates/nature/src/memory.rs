@@ -1,7 +1,7 @@
 use serde::{Serialize, Deserialize};
 use std::collections::HashMap;
 
-#[derive(Serialize, Deserialize, Default)]
+#[derive(Serialize, Deserialize, Default, bincode_next::Encode, bincode_next::Decode)]
 pub struct NatureMemory {
     pub known_combinations: HashMap<String, CombinationKnowledge>,
     pub observed_lifetimes: Vec<u64>,
@@ -10,7 +10,7 @@ pub struct NatureMemory {
     pub total_observations: u64
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 pub struct CombinationKnowledge {
     pub occurrences: u32,
     pub success_rate: f32,
@@ -65,7 +65,7 @@ impl NatureMemory {
         }
 
         // Sauvegarde au format binaire
-        if let Ok(state) = bincode::serialize(self) {
+        if let Ok(state) = bincode_next::encode_to_vec(self, bincode_next::config::standard()) {
             if let Err(e) = std::fs::write(format!("{}.bin", path), state) {
                 eprintln!("Erreur lors de la sauvegarde de l'état (binaire): {}", e);
             }

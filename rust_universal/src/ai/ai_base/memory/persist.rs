@@ -83,7 +83,7 @@ pub(crate) fn save_to_ron<T: Serialize>(value: &T, path: &str) -> io::Result<()>
 }
 
 pub(crate) fn save_to_bin<T: Serialize>(value: &T, path: &str) -> io::Result<()> {
-    serialization::save_serialized(value, path, |v| Ok(bincode::serialize(v)?))
+    serialization::save_serialized(value, path, |v| Ok(bincode_next::encode_to_vec(v, bincode_next::config::standard())?))
 }
 
 pub(crate) fn load_from_ron<T: DeserializeOwned>(path: &str) -> io::Result<T> {
@@ -97,7 +97,7 @@ pub(crate) fn load_from_ron<T: DeserializeOwned>(path: &str) -> io::Result<T> {
 
 pub(crate) fn load_from_bin<T: DeserializeOwned>(path: &str) -> io::Result<T> {
     let data = fs::read(path)?;
-    let value = bincode::deserialize(&data).map_err(|e| Error::new(ErrorKind::Other, e))?;
+    let value = bincode_next::decode_from_slice(&data, bincode_next::config::standard()).map(|(v, _)| v).map_err(|e| Error::new(ErrorKind::Other, e))?;
     Ok(value)
 }
 

@@ -5,7 +5,7 @@ use chrono::{DateTime, Utc};
 use serde::{Serialize, Deserialize};
 use crate::brain::VersioningBrain;  // Remplacer models::ChangeGraph par VersioningBrain
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 pub struct Snapshot {
     version: String,
     timestamp: DateTime<Utc>,
@@ -14,7 +14,7 @@ pub struct Snapshot {
     brain_state: VersioningBrain,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 struct FileState {
     path: PathBuf,
     content: Vec<u8>,
@@ -58,7 +58,7 @@ impl SnapshotManager {
         };
 
         let mut file = File::create(self.snapshot_dir.join(format!("snapshot_{}.bin", snapshot.version)))?;
-        bincode::serialize_into(&mut file, &snapshot)
+        bincode_next::encode_into_std_write(&snapshot, &mut &mut file, bincode_next::config::standard())
             .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
         
         self.current = Some(snapshot);

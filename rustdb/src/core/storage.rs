@@ -20,7 +20,7 @@ impl StorageManager {
     pub fn save<T: Serialize>(&self, collection: &Collection<T>) -> Result<()> {
         let file_path = self.base_path.join(format!("{}.db", collection.name));
         let writer = BufWriter::new(File::create(file_path)?);
-        bincode::serialize_into(writer, collection)?;
+        bincode_next::encode_into_std_write(collection, &mut writer, bincode_next::config::standard())?;
         
         // Save indexes
         self.save_indexes(collection)?;
@@ -30,7 +30,7 @@ impl StorageManager {
     fn save_indexes<T: Serialize>(&self, collection: &Collection<T>) -> Result<()> {
         for (field, index) in &collection.indexes {
             let index_path = self.index_path.join(format!("{}_{}.idx", collection.name, field));
-            let index_data = bincode::serialize(index)
+            let index_data = bincode_next::encode_to_vec(index, bincode_next::config::standard())
                 .map_err(|e| format!("Erreur sérialisation index : {}", e))?;
             fs::write(&index_path, index_data)
                 .map_err(|e| format!("Erreur écriture index : {}", e))?;
@@ -48,7 +48,7 @@ impl StorageManager {
             
             if file_name.starts_with(&collection_name) {
                 let index_data = fs::read(entry.path())?;
-                let index: Index = bincode::deserialize(&index_data)
+                let index: Index = bincode_next::decode_from_slice(&index_data, bincode_next::config::standard()).map(|(v, _)| v)
                     .map_err(|e| format!("Erreur désérialisation index : {}", e))?;
                 indexes.insert(index.field_path.clone(), index);
             }

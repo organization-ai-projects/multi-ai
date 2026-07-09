@@ -36,7 +36,7 @@ impl PathManager {
         // fichier_path est généralement "shared_center/ia_list.bin"
         let file = File::open(file_path)?;
         let reader = BufReader::new(file);
-        let configs: Vec<IaConfig> = bincode::deserialize_from(reader)
+        let configs: Vec<IaConfig> = bincode_next::decode_from_std_read(&mut reader, bincode_next::config::standard())
             .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))?;
         Ok(Self { configs })
     }

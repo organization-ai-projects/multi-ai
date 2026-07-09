@@ -4,7 +4,8 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-ron = { workspace = true }
+bincode-next.workspace = true
+ron.workspace = true
 toml_edit = "0.21"
-serde = { workspace = true }
-chrono = "0.4"
+serde.workspace = true
+chrono.workspace = true

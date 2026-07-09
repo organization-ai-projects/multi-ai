@@ -21,7 +21,7 @@ impl BinaryPersistence {
 
 impl PersistenceStrategy for BinaryPersistence {
     fn save<T: Serialize>(&self, key: &str, data: &T) -> Result<()> {
-        let serialized = bincode::serialize(data)?;
+        let serialized = bincode_next::encode_to_vec(data, bincode_next::config::standard())?;
         let pages = self.split_into_pages(&serialized);
         
         for (i, page) in pages.iter().enumerate() {
@@ -42,7 +42,7 @@ impl PersistenceStrategy for BinaryPersistence {
             page_id += 1;
         }
 
-        Ok(bincode::deserialize(&data)?)
+        Ok(bincode_next::decode_from_slice(&data, bincode_next::config::standard()).map(|(v, _)| v)?)
     }
 
     fn delete(&self, key: &str) -> Result<()> {

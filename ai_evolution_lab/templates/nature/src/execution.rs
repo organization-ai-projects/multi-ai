@@ -9,7 +9,7 @@ use std::process::Command;
 use std::time::{Instant, Duration};
 use serde::{Serialize, Deserialize};
 
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, bincode_next::Encode, bincode_next::Decode)]
 pub struct ExecutionResult {
     pub survived: bool,
     pub lifetime_ms: u64,

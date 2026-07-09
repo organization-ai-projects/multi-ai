@@ -11,7 +11,7 @@ use laboratory::Laboratory;
 use std::path::PathBuf;
 use serde::{Serialize, Deserialize};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 struct Config {
     id: String,
     kind: String, 

@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 // Gère une collection générique d'éléments (utilisé par le manager pour les liens du graphe mémoire de l'IA).
 
-#[derive(Debug, Default, Serialize, Deserialize)]
+#[derive(Debug, Default, Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 pub(crate) struct MemoryLinks<T> { // Visibilité restreinte à `memory`
     links: Vec<T>,
 }

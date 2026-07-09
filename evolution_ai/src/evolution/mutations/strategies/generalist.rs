@@ -33,7 +33,7 @@ impl GeneralistMutator {
 
 impl MutationProvider for GeneralistMutator {
     fn mutate(&self, code: &str, max_mutations: usize) -> MutationResult {
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         let mut mutated = code.to_string();
         let mut mutations_applied = 0;
 
@@ -44,11 +44,11 @@ impl MutationProvider for GeneralistMutator {
             Expression,
         }
 
-        while mutations_applied < max_mutations && rng.gen_bool(self.mutation_rate) {
+        while mutations_applied < max_mutations && rng.random_bool(self.mutation_rate) {
             let old_code = mutated.clone();
 
             // Choisir une stratégie
-            let strategy = match rng.gen_range(0..10) {
+            let strategy = match rng.random_range(0..10) {
                 0..=3 => Strategy::Pattern,   // 40%
                 4..=5 => Strategy::Insertion, // 20%
                 _ => Strategy::Expression,    // 40%
@@ -70,7 +70,7 @@ impl MutationProvider for GeneralistMutator {
                     ];
                     let mut lines: Vec<_> = mutated.lines().collect();
                     if !lines.is_empty() {
-                        let pos = rng.gen_range(0..lines.len());
+                        let pos = rng.random_range(0..lines.len());
                         lines.insert(pos, insertions.choose(&mut rng).unwrap());
                         lines.join("\n")
                     } else {

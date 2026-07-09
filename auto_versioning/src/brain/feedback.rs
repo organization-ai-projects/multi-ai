@@ -3,7 +3,7 @@ use std::path::PathBuf;
 use serde::{Serialize, Deserialize};
 use chrono::{DateTime, Utc};
 
-#[derive(Debug, Serialize, Deserialize, Clone)]  // Ajouter Clone
+#[derive(Debug, Serialize, Deserialize, Clone, bincode_next::Encode, bincode_next::Decode)]  // Ajouter Clone
 pub struct DevFeedback {
     pub author: String,
     pub timestamp: DateTime<Utc>,
@@ -15,7 +15,7 @@ pub struct DevFeedback {
     pub notes: Option<String>,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)] // Ajouter Clone
+#[derive(Debug, Serialize, Deserialize, Clone, bincode_next::Encode, bincode_next::Decode)] // Ajouter Clone
 pub struct CommunityPattern {
     pub confirmations: u32,
     pub corrections: HashMap<String, u32>,
@@ -32,7 +32,7 @@ impl CommunityPattern {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)] // Ajouter Clone
+#[derive(Debug, Serialize, Deserialize, Clone, bincode_next::Encode, bincode_next::Decode)] // Ajouter Clone
 pub struct GlobalLearning {
     pub feedbacks: Vec<DevFeedback>,
     pub shared_patterns: HashMap<String, CommunityPattern>,

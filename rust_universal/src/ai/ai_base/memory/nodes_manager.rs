@@ -5,7 +5,7 @@ use super::nodes::MemoryNodes;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-#[derive(Debug, Default, Serialize, Deserialize)]
+#[derive(Debug, Default, Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 pub(crate) struct NodesManager { // Visibilité restreinte à `memory`
     nodes: MemoryNodes<MemoryNode>,
     tags: HashMap<usize, Vec<String>>, // Associe des tags aux nœuds par leur ID

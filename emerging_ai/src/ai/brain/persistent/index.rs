@@ -2,7 +2,7 @@ use serde::{Serialize, Deserialize};
 use std::collections::HashMap;
 use uuid::Uuid;
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, bincode_next::Encode, bincode_next::Decode)]
 pub struct GlobalIndex {
     pub nodes: HashMap<Uuid, u64>, // UUID -> Timestamp
     pub links: HashMap<Uuid, u64>, // UUID -> Timestamp

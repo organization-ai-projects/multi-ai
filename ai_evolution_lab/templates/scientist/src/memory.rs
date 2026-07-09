@@ -2,7 +2,7 @@ use serde::{Serialize, Deserialize};
 use std::collections::HashMap;
 use std::path::PathBuf;
 
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, bincode_next::Encode, bincode_next::Decode)]
 pub struct DiscoveredMolecule {
     pub content: String,
     pub success_count: u32,
@@ -10,7 +10,7 @@ pub struct DiscoveredMolecule {
     pub last_context: String,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 pub struct ObservedMolecule {
     pub content: String,
     pub observed_contexts: Vec<String>,
@@ -18,7 +18,7 @@ pub struct ObservedMolecule {
     pub total_uses: u32
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 pub struct ExperimentMemory {
     pub discovered_molecules: HashMap<String, u32>,
     pub observed_combinations: Vec<String>,
@@ -59,7 +59,7 @@ impl ExperimentMemory {
         }
 
         // Sauvegarde au format binaire pour performance
-        if let Ok(state) = bincode::serialize(self) {
+        if let Ok(state) = bincode_next::encode_to_vec(self, bincode_next::config::standard()) {
             if let Err(e) = std::fs::write("memory_state.bin", state) {
                 eprintln!("Erreur lors de la sauvegarde de la mémoire (binaire): {}", e);
             }
@@ -67,7 +67,7 @@ impl ExperimentMemory {
     }
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 pub struct VisualMemory {
     // Représentation visuelle des séquences génétiques observées
     genome_patterns: HashMap<String, Vec<u8>>, // génome -> représentation visuelle
@@ -76,7 +76,7 @@ pub struct VisualMemory {
     current_knowledge: u32,                    // niveau de compréhension
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 pub struct GenomeSequence {
     sequence: Vec<String>,           // molécules dans l'ordre
     visual_pattern: Vec<u8>,         // représentation visuelle

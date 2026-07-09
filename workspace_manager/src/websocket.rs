@@ -16,12 +16,12 @@ async fn handle_socket(socket: WebSocket, tx: broadcast::Sender<String>) {
     tokio::spawn(async move {
         while let Some(Ok(Message::Text(text))) = receiver.next().await {
             println!("Message reçu : {}", text);
-            let _ = tx.send(text);
+            let _ = tx.send(text.to_string());
         }
     });
 
     while let Ok(message) = rx.recv().await {
-        if sender.feed(Message::Text(message)).await.is_err() { // Utilisation de feed au lieu de send
+        if sender.feed(Message::Text(message.into())).await.is_err() { // Utilisation de feed au lieu de send
             break;
         }
         if sender.flush().await.is_err() { // Ajout de flush après feed

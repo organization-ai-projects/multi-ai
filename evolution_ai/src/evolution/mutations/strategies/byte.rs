@@ -16,20 +16,20 @@ impl ByteMutator {
 
 impl MutationProvider for ByteMutator {
     fn mutate(&self, code: &str, max_mutations: usize) -> MutationResult {
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         let mut bytes = code.as_bytes().to_vec();
         let original = bytes.clone(); // Sauvegarde de l'état initial
         let mut mutations_applied = 0;
 
-        while mutations_applied < max_mutations && rng.gen_bool(self.mutation_rate) {
-            let idx = rng.gen_range(0..bytes.len());
+        while mutations_applied < max_mutations && rng.random_bool(self.mutation_rate) {
+            let idx = rng.random_range(0..bytes.len());
             let original_byte = bytes[idx];
 
             bytes[idx] = match original_byte {
-                b'0'..=b'9' => rng.gen_range(b'0'..=b'9'),
-                b'a'..=b'z' => rng.gen_range(b'a'..=b'z'),
-                b'A'..=b'Z' => rng.gen_range(b'A'..=b'Z'),
-                b'+' | b'-' | b'*' | b'/' => [b'+', b'-', b'*', b'/'][rng.gen_range(0..4)],
+                b'0'..=b'9' => rng.random_range(b'0'..=b'9'),
+                b'a'..=b'z' => rng.random_range(b'a'..=b'z'),
+                b'A'..=b'Z' => rng.random_range(b'A'..=b'Z'),
+                b'+' | b'-' | b'*' | b'/' => [b'+', b'-', b'*', b'/'][rng.random_range(0..4)],
                 _ => continue,
             };
 

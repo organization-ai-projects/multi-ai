@@ -1,6 +1,6 @@
 /// Ce fichier gère une population de stratégies (`Population`).
 /// Rôle : Implémenter des mécanismes d'évolution comme la sélection, le croisement et la mutation pour optimiser des stratégies.
-use bincode::{deserialize, serialize};
+
 use rand::{seq::SliceRandom, thread_rng};
 use ron::de::from_str;
 use ron::ser::{to_string_pretty, PrettyConfig};
@@ -9,7 +9,7 @@ use std::fs::File;
 use std::io::{Read, Write};
 
 // Population de stratégies (ou d'agents complets)
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Clone, Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 pub struct Population {
     pub individuals: Vec<Strategy>,
     pub history: Vec<Strategy>, // Pour garder mémoire des stratégies passées
@@ -45,11 +45,11 @@ impl Population {
     }
 
     pub fn crossover(&self, parent1: &Strategy, parent2: &Strategy) -> Strategy {
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         let mut pipeline = vec![];
         let min_len = usize::min(parent1.pipeline.len(), parent2.pipeline.len());
         for i in 0..min_len {
-            if rng.gen_bool(0.5) {
+            if rng.random_bool(0.5) {
                 pipeline.push(parent1.pipeline[i].clone());
             } else {
                 pipeline.push(parent2.pipeline[i].clone());
@@ -67,7 +67,7 @@ impl Population {
 
     pub fn next_generation(&mut self, survivor_ratio: f64, mutation_rate: f64) {
         let survivors = self.select(survivor_ratio);
-        let mut rng = thread_rng();
+        let mut rng = rng();
         let mut new_individuals = survivors.clone();
 
         // Générer de nouveaux individus par crossover + mutation
@@ -75,7 +75,7 @@ impl Population {
             let parents = survivors.choose_multiple(&mut rng, 2).collect::<Vec<_>>();
             if parents.len() == 2 {
                 let mut child = self.crossover(parents[0], parents[1]);
-                if rng.gen_bool(mutation_rate) {
+                if rng.random_bool(mutation_rate) {
                     child = child.mutate();
                 }
                 new_individuals.push(child);
@@ -90,7 +90,7 @@ impl Population {
 
     // Sauvegarde et chargement au format bincode
     pub fn save_bincode(&self, path: &str) -> std::io::Result<()> {
-        let encoded = serialize(self).unwrap();
+        let encoded = bincode_next::encode_to_vec(self, bincode_next::config::standard()).unwrap();
         let mut file = File::create(path)?;
         file.write_all(&encoded)?;
         Ok(())
@@ -100,7 +100,7 @@ impl Population {
         let mut file = File::open(path)?;
         let mut buf = Vec::new();
         file.read_to_end(&mut buf)?;
-        Ok(deserialize(&buf).unwrap())
+        Ok(bincode_next::decode_from_slice(&buf, bincode_next::config::standard()).map(|(v, _)| v).unwrap())
     }
 
     // Sauvegarde et chargement au format RON

@@ -1,7 +1,7 @@
 use serde::{Serialize, Deserialize};
 use uuid::Uuid;
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, bincode_next::Encode, bincode_next::Decode)]
 pub struct MemoryImage {
     pub uuid: Uuid,
     pub bytes: Vec<u8>,        // Contenu binaire de l’image
@@ -24,7 +24,7 @@ impl MemoryImage {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, bincode_next::Encode, bincode_next::Decode)]
 pub struct MemoryCode {
     pub uuid: Uuid,
     pub code: String,
@@ -47,7 +47,7 @@ impl MemoryCode {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, bincode_next::Encode, bincode_next::Decode)]
 pub struct MemoryLog {
     pub uuid: Uuid,
     pub content: String,       // Contenu du log

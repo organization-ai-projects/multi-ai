@@ -4,7 +4,7 @@ use std::sync::{Arc, Mutex};
 use std::time::{SystemTime, UNIX_EPOCH};
 use serde::{Serialize, Deserialize};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 pub struct MonitoringLog {
     pub timestamp: u64,
     pub ia_name: String,
@@ -58,7 +58,7 @@ impl Logger {
         
         // Log au format binaire (pour traitement par l'IA)
         if let Ok(mut file) = self.bin_file.lock() {
-            if let Ok(bin_data) = bincode::serialize(&log) {
+            if let Ok(bin_data) = bincode_next::encode_to_vec(&log, bincode_next::config::standard()) {
                 let len = bin_data.len() as u32;
                 let _ = file.write_all(&len.to_le_bytes()); // Écrire la taille d'abord
                 let _ = file.write_all(&bin_data);          // Puis les données

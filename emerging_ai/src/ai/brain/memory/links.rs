@@ -3,7 +3,7 @@ use uuid::Uuid;
 
 //contient les liens du graphe mémoire de l'IA.
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, bincode_next::Encode, bincode_next::Decode)]
 pub struct MemoryLink {
     pub uuid: Uuid,           // Identifiant unique du lien
     pub source: Uuid,         // UUID du nœud source

@@ -1,5 +1,4 @@
 use crate::scanner;
-use crate::schema::ProjectDocument;
 use crate::workspace::config::WorkspaceConfig;
 use reqwest::Client;
 use std::path::Path;
@@ -18,7 +17,8 @@ impl RustDbClient {
     }
 
     pub async fn create_collection(&self, name: &str) -> Result<(), String> {
-        self.client.post(&format!("{}/collections", self.base_url))
+        self.client
+            .post(&format!("{}/collections", self.base_url))
             .json(&name)
             .send()
             .await
@@ -26,8 +26,16 @@ impl RustDbClient {
         Ok(())
     }
 
-    pub async fn insert_document<T: serde::Serialize>(&self, collection: &str, doc: T) -> Result<(), String> {
-        self.client.post(&format!("{}/collections/{}/documents", self.base_url, collection))
+    pub async fn insert_document<T: serde::Serialize>(
+        &self,
+        collection: &str,
+        doc: T,
+    ) -> Result<(), String> {
+        self.client
+            .post(&format!(
+                "{}/collections/{}/documents",
+                self.base_url, collection
+            ))
             .json(&doc)
             .send()
             .await
@@ -46,11 +54,11 @@ pub async fn scan_workspace(name: &str) -> Result<(), String> {
     let db = RustDbClient::new("http://localhost:8080");
     let config = WorkspaceConfig::default();
     let projects = scanner::scan_projects(Path::new(&config.scan_paths[0]), &config.excluded_paths);
-    
+
     for project in projects {
         db.insert_document(name, project.data).await?;
     }
-    
+
     // Note: Counting documents would require a separate endpoint in the RustDB API
     println!("✅ {} projets trouvés et sauvegardés", projects.len());
     Ok(())

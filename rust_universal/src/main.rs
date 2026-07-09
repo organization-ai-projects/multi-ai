@@ -1,6 +1,6 @@
-use rust_universal::ai::manager_ai::{create_agent::create_agent, launch_all};
-use rust_universal::ai::orchestrator::brain_orchestrator::{run_brain_cycle_with_config, BrainCycleConfig};
-use rust_universal::cli;
+mod ai;
+mod cli;
+mod cli_commands;
 
 fn main() {
     let project_base = "rust_universal";

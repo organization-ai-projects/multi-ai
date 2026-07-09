@@ -15,7 +15,7 @@ impl Explorer {
         input: &str,
         transformations: &[Box<dyn Fn(&str) -> String + Send + Sync>],
     ) -> String {
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         let strat = transformations.choose(&mut rng).unwrap();
         strat(input)
     }
@@ -34,7 +34,7 @@ impl Explorer {
         &self,
         transformations: &'a [Box<dyn Fn(&str) -> String + Send + Sync>],
     ) -> Option<Box<dyn Fn(&str) -> String + Send + Sync + 'a>> {
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
 
         if transformations.len() < 2 {
             return None;

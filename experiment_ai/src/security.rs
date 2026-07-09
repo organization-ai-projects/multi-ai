@@ -5,7 +5,7 @@ use std::process::Command;
 use std::time::{SystemTime, UNIX_EPOCH};
 use serde::{Serialize, Deserialize};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 struct SystemLogEntry {
     timestamp: u64,
     agent_id: String,

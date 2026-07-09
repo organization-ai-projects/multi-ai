@@ -13,8 +13,8 @@ impl CrossoverManager {
     }
 
     pub fn try_crossover(&self, code1: &str, code2: &str) -> Option<String> {
-        let mut rng = rand::thread_rng();
-        if rng.gen_bool(self.strategy.crossover_rate) {
+        let mut rng = rand::rng();
+        if rng.random_bool(self.strategy.crossover_rate) {
             Some(
                 self.strategy
                     .crossover(&[code1.to_string(), code2.to_string()], &mut rng),

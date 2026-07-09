@@ -30,7 +30,7 @@ impl Explorer {
     }
 
     pub fn try_random_action(&mut self, input: &str) -> &Experiment {
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         let strat = self.strategies.choose(&mut rng).unwrap();
         let result = strat(input);
 

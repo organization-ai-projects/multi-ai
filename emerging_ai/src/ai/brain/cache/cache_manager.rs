@@ -185,7 +185,7 @@ impl CacheManager {
 
         match (entity_type, action) {
             // Actions standards pour tous les types (y compris journal et index)
-            (_, "save") => self.save_data(entity_type, data.uuid, &bincode::serialize(&data)?),
+            (_, "save") => self.save_data(entity_type, data.uuid, &bincode_next::encode_to_vec(&data, bincode_next::config::standard())?),
             (_, "get") => self.get_data(entity_type, data),
             (_, "list") => self.list_entities(entity_type),
             (_, "save_legacy") => self.save_legacy(entity_type, data),
@@ -252,7 +252,7 @@ impl CacheManager {
 
     // Les autres méthodes deviennent privées car tout passe par route()
     fn save_legacy<T: Serialize>(&mut self, entity_type: &str, data: T) -> std::io::Result<()> {
-        let serialized = bincode::serialize(&data)?;
+        let serialized = bincode_next::encode_to_vec(&data, bincode_next::config::standard())?;
         match entity_type {
             "node" => self.save_data("node", uuid, &serialized),
             "link" => self.save_data("link", uuid, &serialized),
@@ -410,7 +410,7 @@ impl CacheManager {
             // Éviction aléatoire
             "random" => {
                 use rand::Rng;
-                let mut rng = rand::thread_rng();
+                let mut rng = rand::rng();
                 
                 if self.node_cache.len() > 0 {
                     let random_uuid = self.node_cache.get_random_uuid(&mut rng)?;

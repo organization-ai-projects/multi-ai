@@ -34,8 +34,8 @@ impl FormatManager {
             (
                 "bin",
                 (
-                    |f, d| bincode::serialize_into(f, d).map_err(|e| e.to_string()),
-                    |f| bincode::deserialize_from(f).map_err(|e| e.to_string()),
+                    |f, d| bincode_next::encode_into_std_write(d, &mut f, bincode_next::config::standard()).map_err(|e| e.to_string()),
+                    |f| bincode_next::decode_from_std_read(&mut f, bincode_next::config::standard()).map_err(|e| e.to_string()),
                 ),
             ),
         ])

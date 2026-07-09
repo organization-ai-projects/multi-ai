@@ -20,7 +20,7 @@ impl ClimateManager {
 
     /// Simule un changement climatique avec saisonnalité, événements rares et pluie variable.
     pub fn simulate_climate_change(&mut self) {
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
 
         // 1. Appliquer la saisonnalité (sinusoïde lente)
         let seasonal_temp_variation =
@@ -31,13 +31,13 @@ impl ClimateManager {
         self.humidity.update(seasonal_humidity_variation);
 
         // 2. Déclencher des événements rares
-        if rng.gen_bool(0.01) {
+        if rng.random_bool(0.01) {
             self.trigger_rare_event();
         }
 
         // 3. Fluctuations normales
-        let temp_delta = rng.gen_range(-2.0..2.0);
-        let humidity_delta = rng.gen_range(-5.0..5.0);
+        let temp_delta = rng.random_range(-2.0..2.0);
+        let humidity_delta = rng.random_range(-5.0..5.0);
         self.temperature.update(temp_delta);
         self.humidity.update(humidity_delta);
 
@@ -61,8 +61,8 @@ impl ClimateManager {
 
     /// Déclenche un événement rare.
     fn trigger_rare_event(&mut self) {
-        let mut rng = rand::thread_rng();
-        match rng.gen_range(0..2) {
+        let mut rng = rand::rng();
+        match rng.random_range(0..2) {
             0 => {
                 println!("Sécheresse ! Réduction drastique de l'humidité et de l'eau.");
                 self.humidity.update(-20.0);

@@ -1,6 +1,6 @@
 use super::mutation_types::{MutationIntensity, MutationResult, MutationType};
 use crate::ai::brain::observable::{AutoObservable, Observable};
-use rand::{seq::SliceRandom, thread_rng, Rng};
+use rand::{seq::SliceRandom, rng, Rng};
 use syn::{parse_str, ItemFn};
 
 pub struct MutationManager {
@@ -44,7 +44,7 @@ impl MutationManager {
     fn shuffle_code(&self, code: &str) -> Option<MutationResult> {
         let ast: ItemFn = parse_str(code).ok()?;
         let mut stmts = ast.block.stmts.clone();
-        stmts.shuffle(&mut thread_rng());
+        stmts.shuffle(&mut rng());
 
         let mut new_fn = ast.clone();
         new_fn.block.stmts = stmts;
@@ -59,15 +59,15 @@ impl MutationManager {
 
     fn rename_elements(&self, code: &str) -> Option<MutationResult> {
         let mut ast: ItemFn = parse_str(code).ok()?;
-        let mut rng = thread_rng();
+        let mut rng = rng();
 
         // Mutation pure : renommage complètement aléatoire
         for stmt in &mut ast.block.stmts {
             if let syn::Stmt::Local(local) = stmt {
                 if let syn::Pat::Ident(ref mut pat_ident) = *local.pat {
                     // Génère un nom totalement aléatoire
-                    let chars: String = (0..rng.gen_range(1..20))
-                        .map(|_| rng.gen_range(b'a'..=b'z') as char)
+                    let chars: String = (0..rng.random_range(1..20))
+                        .map(|_| rng.random_range(b'a'..=b'z') as char)
                         .collect();
 
                     pat_ident.ident = syn::Ident::new(&chars, pat_ident.ident.span());
@@ -86,11 +86,11 @@ impl MutationManager {
 
     fn invert_logic(&self, code: &str) -> Option<MutationResult> {
         let mut ast: ItemFn = parse_str(code).ok()?;
-        let mut rng = thread_rng();
+        let mut rng = rng();
 
         // Mutations aléatoires sur la logique
         for stmt in &mut ast.block.stmts {
-            if rng.gen_bool(0.5) {
+            if rng.random_bool(0.5) {
                 // Chance aléatoire de muter
                 match stmt {
                     // Mutation d'une condition : on insère des opérateurs aléatoires
@@ -122,7 +122,7 @@ impl MutationManager {
             MutationType::Random,
         ];
 
-        if let Some(strategy) = strategies.choose(&mut thread_rng()) {
+        if let Some(strategy) = strategies.choose(&mut rng()) {
             match strategy {
                 MutationType::Shuffle => self.shuffle_code(code),
                 MutationType::Rename => self.rename_elements(code),
@@ -141,20 +141,20 @@ impl MutationManager {
         intensity: MutationIntensity,
     ) -> Option<String> {
         let ast = parse_str(code).ok()?;
-        let mut rng = thread_rng();
+        let mut rng = rng();
 
         match intensity {
             MutationIntensity::Micro => {
                 // Mutation au niveau caractère/token
-                self.mutate_chars(&ast, rng.gen_range(1..5))
+                self.mutate_chars(&ast, rng.random_range(1..5))
             }
             MutationIntensity::Minor => {
                 // Mutation au niveau expression
-                self.mutate_expressions(&ast, rng.gen_range(1..3))
+                self.mutate_expressions(&ast, rng.random_range(1..3))
             }
             MutationIntensity::Major => {
                 // Mutation au niveau bloc
-                self.mutate_blocks(&ast, rng.gen_range(1..2))
+                self.mutate_blocks(&ast, rng.random_range(1..2))
             }
             MutationIntensity::Radical => {
                 // Mutation complète

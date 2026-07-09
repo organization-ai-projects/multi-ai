@@ -53,12 +53,12 @@ impl<T: Apply> FitnessEngine<T> {
     where
         F: Fn(&T) -> f64 + Send + Sync + 'static,
     {
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         // Ajouter une nouvelle règle aléatoire ou muter une existante
-        if rng.gen_bool(0.5) && !self.rules.is_empty() {
+        if rng.random_bool(0.5) && !self.rules.is_empty() {
             // Muter une existante
-            let idx = rng.gen_range(0..self.rules.len());
-            let delta = rng.gen_range(-50.0..50.0);
+            let idx = rng.random_range(0..self.rules.len());
+            let delta = rng.random_range(-50.0..50.0);
             let new_rule = FitnessRule {
                 rule: Arc::new(move |s: &T| {
                     let out = s.apply(5.0 + delta);
@@ -69,7 +69,7 @@ impl<T: Apply> FitnessEngine<T> {
             self.rules[idx] = new_rule;
         } else {
             // Nouvelle règle
-            let delta = rng.gen_range(-100.0..100.0);
+            let delta = rng.random_range(-100.0..100.0);
             self.rules.push(FitnessRule {
                 rule: Arc::new(move |s: &T| {
                     let out = s.apply(3.0 + delta);

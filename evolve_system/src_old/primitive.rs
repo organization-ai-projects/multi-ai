@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 // Les opérations primitives que la stratégie peut enchaîner
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Clone, Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 pub enum Primitive {
     Add(f64),
     Mul(f64),
@@ -36,11 +36,11 @@ impl Primitive {
     }
 
     pub fn random() -> Self {
-        let mut rng = rand::thread_rng();
-        match rng.gen_range(0..4) {
-            0 => Primitive::Add(rng.gen_range(-10.0..10.0)),
-            1 => Primitive::Mul(rng.gen_range(0.1..3.0)),
-            2 => Primitive::Threshold(rng.gen_range(-5.0..5.0)),
+        let mut rng = rand::rng();
+        match rng.random_range(0..4) {
+            0 => Primitive::Add(rng.random_range(-10.0..10.0)),
+            1 => Primitive::Mul(rng.random_range(0.1..3.0)),
+            2 => Primitive::Threshold(rng.random_range(-5.0..5.0)),
             3 => Primitive::Custom("dynamic_op".to_string()), // Exemple de primitive dynamique
             _ => Primitive::Add(1.0),
         }

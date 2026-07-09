@@ -22,10 +22,10 @@ impl CrossoverStrategy {
         let all_functions: HashSet<_> = functions.iter().flat_map(|f| f.keys()).collect();
 
         for func_name in all_functions {
-            let source_idx = rng.gen_range(0..functions.len());
+            let source_idx = rng.random_range(0..functions.len());
             if let Some(func) = functions[source_idx].get(func_name) {
                 // 30% chance de faire un crossover interne
-                if rng.gen_bool(0.3) {
+                if rng.random_bool(0.3) {
                     result.push_str(&self.cross_function_bodies(
                         func,
                         functions.iter().filter_map(|f| f.get(func_name)).collect(),
@@ -41,7 +41,7 @@ impl CrossoverStrategy {
     }
 
     fn cross_function_bodies(&self, base: &str, variants: Vec<&String>) -> String {
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         let mut lines: Vec<_> = base.lines().collect();
 
         // Identifier les blocs { } dans la fonction
@@ -56,7 +56,7 @@ impl CrossoverStrategy {
             let block_end = find_matching_brace(&lines, block_start);
             if let Some(end) = block_end {
                 // 30% de chance de remplacer le bloc
-                if rng.gen_bool(0.3) {
+                if rng.random_bool(0.3) {
                     if let Some((v_start, v_end)) =
                         find_similar_block(&variants[0].lines().collect::<Vec<_>>())
                     {

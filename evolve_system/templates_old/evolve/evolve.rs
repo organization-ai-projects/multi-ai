@@ -5,7 +5,7 @@ pub struct MetaExplorer {
 
 impl MetaExplorer {
     pub fn new(n: usize) -> Self {
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         Self {
             population: (0..n)
                 .map(|_| StrategyGenome::new_random(&mut rng))

@@ -6,15 +6,12 @@ mod scanner;
 mod schema;
 mod workspace;
 
-use std::collections::HashMap;
-use clap::{Parser, Subcommand};
 use crate::nosql_structural::{collections::Collection, storage::StorageManager};
 use crate::schema::ProjectDocument;
-use crate::error::Result;
+use clap::{Parser, Subcommand};
 use ron::de::from_str;
 use std::fs;
 use std::path::Path;
-use uuid::Uuid;
 
 #[derive(Parser)]
 #[command(name = "workspace")]

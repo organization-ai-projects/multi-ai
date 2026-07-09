@@ -54,9 +54,9 @@ impl MutationWalker {
 
     fn mutate_rust_file(&mut self, path: &Path) -> std::io::Result<()> {
         let content = fs::read_to_string(path)?;
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
 
-        let mutated = if rng.gen_bool(0.3) {
+        let mutated = if rng.random_bool(0.3) {
             self.add_module_usage(&content)
         } else {
             self.mutation_strategy.mutate_code(&content, None)
@@ -66,8 +66,8 @@ impl MutationWalker {
     }
 
     fn maybe_create_module(&self, dir: &Path) -> std::io::Result<()> {
-        let mut rng = rand::thread_rng();
-        if rng.gen_bool(0.1) {
+        let mut rng = rand::rng();
+        if rng.random_bool(0.1) {
             let module_name = self.generate_module_name();
             let new_file = dir.join(format!("{}.rs", module_name));
             fs::write(&new_file, self.generate_module_content(&module_name))?;
@@ -117,12 +117,12 @@ impl MutationWalker {
     }
 
     fn generate_module_name(&self) -> String {
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         let prefix = ["util", "core", "helper", "process", "data"];
         format!(
             "{}_{}",
-            prefix[rng.gen_range(0..prefix.len())],
-            rng.gen_range(0..999)
+            prefix[rng.random_range(0..prefix.len())],
+            rng.random_range(0..999)
         )
     }
 
@@ -140,13 +140,13 @@ impl MutationWalker {
     pub fn add_module_usage(&self, content: &str) -> String {
         if let Some(module) = self.known_modules.iter().next() {
             if let Ok(funcs) = self.discover_public_functions(module) {
-                let mut rng = rand::thread_rng();
+                let mut rng = rand::rng();
                 let mut lines = content.lines().map(|l| l.to_string()).collect::<Vec<_>>();
 
                 lines.insert(0, format!("use crate::{};", module));
 
                 if !funcs.is_empty() {
-                    let num_calls = rng.gen_range(1..=3);
+                    let num_calls = rng.random_range(1..=3);
                     for _ in 0..num_calls {
                         if let Some(func) = funcs.choose(&mut rng) {
                             if let Some(pos) = self.find_insertion_point(&lines) {
@@ -166,7 +166,7 @@ impl MutationWalker {
     }
 
     fn find_insertion_point(&self, lines: &[String]) -> Option<usize> {
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         let valid_positions: Vec<_> = lines
             .iter()
             .enumerate()
@@ -181,8 +181,8 @@ impl MutationWalker {
     }
 
     fn generate_function_call(&self, module: &str, func: &str) -> String {
-        let mut rng = rand::thread_rng();
-        match rng.gen_range(0..3) {
+        let mut rng = rand::rng();
+        match rng.random_range(0..3) {
             0 => format!("    let _ = {}::{}();", module, func),
             1 => format!("    if let Ok(_) = {}::{}() {{ }}", module, func),
             _ => format!("    {}::{}().unwrap_or_default();", module, func),

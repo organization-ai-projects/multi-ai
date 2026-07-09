@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, bincode_next::Encode, bincode_next::Decode)]
 pub struct WorkspaceConfig {
     pub name: String,
     pub scan_paths: Vec<String>,

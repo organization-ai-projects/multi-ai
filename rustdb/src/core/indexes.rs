@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use super::{Document, error::Result};
 use serde::{Serialize, Deserialize};
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 pub struct Index {
     pub name: String,
     pub field_path: String,

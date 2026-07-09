@@ -2,7 +2,7 @@ use serde::{Serialize, Deserialize};
 use uuid::Uuid;
 use crate::capacities::mutate_ast::Strategy;
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, bincode_next::Encode, bincode_next::Decode)]
 pub struct MemoryEpisode {
     pub uuid: Uuid,           // UUID unique de l'épisode
     pub node_id: Uuid,        // Noeud principal concerné

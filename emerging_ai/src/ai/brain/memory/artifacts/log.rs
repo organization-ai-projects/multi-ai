@@ -3,7 +3,7 @@ use uuid::Uuid;
 
 //contient les artéfacts de logs de l'IA.
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, bincode_next::Encode, bincode_next::Decode)]
 pub struct MemoryLog {
     pub uuid: Uuid,
     pub content: String,       // Contenu du log

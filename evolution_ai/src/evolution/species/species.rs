@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 pub struct Species {
     pub name: String,
     pub mutation_brutality: f64, // Entre 0.0 (faible) et 1.0 (très brutal)
