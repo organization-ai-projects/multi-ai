@@ -1,0 +1,16 @@
+(
+    entity_actions: {
+        "node": ["save", "get", "list", "batch_save"],
+        "link": ["save", "get", "list", "batch_save"],
+        "code": ["save", "get", "list", "save_legacy"],
+        "episode": ["save", "get", "list"],
+        "log": ["save", "get", "list"],
+        "image": ["save", "get", "list"],
+        "journal": ["save", "complete"],
+        "index": ["add"]
+    },
+    max_cache_size: 10000,
+    eviction_strategy: LRU,
+    flush_policy: Interval(300),
+    transaction_mode: true
+)
