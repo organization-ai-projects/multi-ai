@@ -1,5 +1,6 @@
 use crate::memory::Memory;
 use rand::seq::SliceRandom;
+use rand::Rng;  // Ajout de l'import
 
 pub struct Mutation {
     pub original_molecule: String,     // Molécule d'origine
@@ -56,7 +57,6 @@ impl Mutation {
     }
 
     fn substitute(molecule: &str) -> Option<String> {
-        // Exemple: remplace un caractère par un autre
         let chars: Vec<char> = molecule.chars().collect();
         if chars.is_empty() { return None; }
         

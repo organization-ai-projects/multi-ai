@@ -1,60 +1,51 @@
+use crate::execution::ExecutionResult;
+use crate::life_form::LifeForm;
 use crate::survival_rules::SurvivalRules;
-use crate::lifecycle::LifeForm;
-use std::path::Path;
-use std::process::Command;
-use std::time::{Instant, Duration};
-use serde::{Serialize, Deserialize};
-
-#[derive(Serialize, Deserialize)]
-pub struct ExecutionResult {
-    pub survived: bool,
-    pub lifetime_ms: u64,
-}
+use crate::memory::NatureMemory;
 
 pub struct NaturalSelection {
-    pub survival_rules: SurvivalRules,
-    pub max_runtime: Duration
+    survival_rules: SurvivalRules,
+    memory: NatureMemory,
 }
 
 impl NaturalSelection {
-    pub fn new() -> Self {
+    pub fn new(survival_rules: SurvivalRules, memory: NatureMemory) -> Self {
         Self {
-            survival_rules: SurvivalRules::new(),
-            max_runtime: Duration::from_secs(5)
+            survival_rules,
+            memory,
         }
     }
 
-    pub fn evaluate(&self, form: &LifeForm) -> ExecutionResult {
-        let path = Path::new("environment/forms").join(&form.id);
-        
-        // Vérifie si le code peut survivre
-        if !self.assess_viability(&form.source_code) {
-            return ExecutionResult { survived: false, lifetime_ms: 0 };
+    pub fn evaluate(&self, form: &LifeForm, result: &ExecutionResult) -> bool {
+        // Critères de sélection naturelle
+
+        // 1. Le code a-t-il survécu à l'exécution ?
+        if !result.survived {
+            return false;
         }
 
-        // Exécute et mesure
-        let start = Instant::now();
-        let output = Command::new("cargo")
-            .arg("run")
-            .current_dir(&path)
-            .output();
-
-        let lifetime = start.elapsed().as_millis() as u64;
-        
-        match output {
-            Ok(output) => ExecutionResult {
-                survived: output.status.success(),
-                lifetime_ms: lifetime
-            },
-            Err(_) => ExecutionResult {
-                survived: false,
-                lifetime_ms: 0
-            }
+        // 2. Le code contient-il des comportements ou patterns intéressants ?
+        if self.has_interesting_patterns(&form.source_code) {
+            return true;
         }
+
+        // 3. Le code respecte-t-il les règles de sécurité ?
+        if self.is_safe(&form.source_code) {
+            return true;
+        }
+
+        // 4. Dernier recours : survie minimale (1ms suffit)
+        true
     }
 
-    fn assess_viability(&self, genetic_code: &str) -> bool {
-        // Vérifie uniquement les motifs létaux
-        !self.survival_rules.contains_lethal_code(genetic_code)
+    fn has_interesting_patterns(&self, code: &str) -> bool {
+        // Utilise la mémoire pour vérifier les patterns connus
+        let known_patterns = &self.memory.successful_patterns;
+        known_patterns.iter().any(|pattern| code.contains(pattern))
+    }
+
+    fn is_safe(&self, code: &str) -> bool {
+        // Utilise SurvivalRules pour évaluer la sécurité
+        matches!(self.survival_rules.assess_safety(code), crate::survival_rules::Safety::Safe)
     }
 }

@@ -27,4 +27,12 @@ impl Fossilization {
             }
         }
     }
+
+    pub fn get_fossils(&self) -> impl Iterator<Item = &LifeForm> {
+        self.fossils.iter()
+    }
+
+    pub fn count(&self) -> usize {
+        self.fossils.len()
+    }
 }

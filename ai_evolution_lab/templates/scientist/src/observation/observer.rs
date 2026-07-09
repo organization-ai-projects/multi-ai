@@ -5,6 +5,8 @@ use serde::Deserialize;
 use uuid::uuid7;
 use std::fs;
 use crate::memory::Memory;
+use crate::ecosystem::ObservableSpecimen;
+use crate::life_form::LifeForm;
 
 pub struct Observer {
     environment_path: PathBuf,
@@ -13,25 +15,32 @@ pub struct Observer {
 
 impl Observer {
     pub fn new(environment_path: impl AsRef<Path>) -> Self {
-        // ...existing new implementation...
+        Self {
+            environment_path: environment_path.as_ref().to_path_buf(),
+            knowledge_level: 0, // Initialisation par défaut
+        }
     }
 
-    pub fn scan_environment(&mut self) -> Vec<Observation> {
-        let mut observations = Vec::new();
-        
-        // Parcours des formes de vie
-        if let Ok(entries) = fs::read_dir(&self.environment_path) {
-            for entry in entries.flatten() {
-                if let Ok(metadata) = entry.metadata() {
-                    if metadata.is_dir() {
-                        let observation = self.observe_lifeform(&entry.path());
-                        observations.push(observation);
-                    }
-                }
+    pub fn scan_environment(&mut self, specimens: &[ObservableSpecimen]) -> Vec<Observation> {
+        specimens.iter().map(|specimen| {
+            Observation {
+                specimen_id: uuid7(),
+                observation_type: self.determine_observation_type(&specimen.state),
+                is_alive: matches!(specimen.state, State::Alive),
+                stdout: None,  // Les scientifiques n'ont pas accès aux logs internes
+                stderr: None,
+                execution_time_ms: specimen.total_lifetime,
+                source_code: None,  // Le code source n'est pas directement visible
             }
-        }
+        }).collect()
+    }
 
-        observations
+    fn determine_observation_type(&self, state: &State) -> ObservationType {
+        match state {
+            State::Alive => ObservationType::Behavior,
+            State::Dead => ObservationType::Dissection,
+            State::Fossilized => ObservationType::External,
+        }
     }
 
     fn observe_lifeform(&self, path: &Path) -> Observation {
@@ -152,6 +161,32 @@ impl Observer {
         }
 
         insights.join("\n")
+    }
+
+    pub fn observe(&self, life_form: &LifeForm, zoom_level: u8) -> Observation {
+        let logs = life_form.get_logs(zoom_level);
+
+        Observation {
+            specimen_id: life_form.id.clone(),
+            observation_type: match life_form.current_state {
+                State::Alive => ObservationType::Behavior,
+                State::Dead => ObservationType::Dissection,
+                State::Fossilized => ObservationType::External,
+            },
+            is_alive: matches!(life_form.current_state, State::Alive),
+            stdout: if zoom_level >= 2 {
+                Some(format!("Logs: {:?}", logs))
+            } else {
+                None
+            },
+            stderr: None, // Accessible uniquement à un zoom plus élevé
+            execution_time_ms: life_form.total_lifetime,
+            source_code: if zoom_level >= 3 {
+                Some(life_form.source_code.clone())
+            } else {
+                None
+            },
+        }
     }
 }
 

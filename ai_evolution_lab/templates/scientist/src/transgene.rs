@@ -50,16 +50,15 @@ impl ObservedPattern {
 
 impl GeneticModification {
     pub fn try_modify(genome: &str, memory: &VisualMemory) -> Option<Self> {
-        // Tente une modification basée sur la mémoire visuelle
         memory.try_genetic_modification(genome).map(|modified| {
             Self {
-                source_pattern: Uuid::new_v4(),
-                target_pattern: Uuid::new_v4(),
-                operation: ModificationType::Substitution {
-                    old: "".into(),
-                    new: "".into()
+                source_pattern: uuid::Uuid::new_v7(),
+                target_pattern: uuid::Uuid::new_v7(),
+                operation: ModificationType::Partial {
+                    target: uuid::Uuid::new_v7(),
+                    magnitude: 0.5,
                 },
-                confidence: 0.5
+                confidence: 0.8,
             }
         })
     }
