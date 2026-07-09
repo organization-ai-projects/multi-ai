@@ -1,0 +1,25 @@
+# Ignorer tous les fichiers par défaut
+*/**
+
+# Garder uniquement l'extension VSCode
+!vscode-rhl/**
+!package.json
+!README.md
+!LICENSE.txt
+
+# Exclure explicitement les binaires et fichiers de build
+target/
+**/target/
+**/debug/
+*.exe
+*.d
+*.pdb
+
+# Fichiers de développement
+.git/
+.gitignore
+.vscode/
+node_modules/
+Cargo.*
+**/Cargo.*
+pnpm-lock.yaml

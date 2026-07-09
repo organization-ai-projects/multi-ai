@@ -1,0 +1,41 @@
+[
+    (
+        name: "serialize_bin",
+        module: "bincode",
+        function: "serialize_into",
+        args: ["File::create(\"&path\").unwrap()", "&input"],
+        return_handling: ".unwrap()",
+        extension: "bin",
+        std_modules: [
+            "std::fs::File",
+            "std::io::Write"
+        ]
+    ),
+    (
+        name: "serialize_ron",
+        module: "ron::ser",
+        function: "to_writer", 
+        args: ["File::create(\"&path\").unwrap()", "&input"],
+        return_handling: ".unwrap()",
+        extension: "ron",
+        std_modules: ["std::fs::File", "std::io::Write"]
+    ),
+    (
+        name: "deserialize_ron",
+        module: "ron::de",
+        function: "from_reader",
+        args: ["File::open(\"&path\").unwrap()", "&input"],
+        return_handling: ".unwrap()",
+        extension: "ron",
+        std_modules: ["std::fs::File", "std::io::Read"]
+    ),
+    (
+        name: "deserialize_bin",
+        module: "bincode",
+        function: "deserialize_from",
+        args: ["File::open(\"&path\").unwrap()", "&input"],
+        return_handling: ".unwrap()",
+        extension: "bin",
+        std_modules: ["std::fs::File", "std::io::Read"]
+    )
+]

@@ -1,0 +1,41 @@
+{
+  "name": "rhl-lang-support",
+  "displayName": "RHL Language Support",
+  "description": "Support for Rust High Level language",
+  "version": "0.0.1",
+  "publisher": "organizationAI",
+  "engines": {
+    "vscode": "^1.70.0"
+  },
+  "categories": ["Programming Languages"],
+  "activationEvents": ["onLanguage:rhl"],
+  "main": "extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "rhl",
+        "aliases": ["RHL", "Rust High Level"],
+        "extensions": [".rhl"],
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./icons/rhl-light.png",
+          "dark": "./icons/rhl-dark.png"
+        }
+      }
+    ],
+    "grammars": [
+      {
+        "language": "rhl",
+        "scopeName": "source.rhl",
+        "path": "./syntaxes/rhl.tmLanguage.json"
+      }
+    ]
+  },
+  "scripts": {
+    "postinstall": "npm run compile",
+    "compile": "echo Done"
+  },
+  "dependencies": {
+    "vscode-languageclient": "^8.1.0"
+  }
+}

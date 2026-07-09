@@ -1,0 +1,81 @@
+{
+    "name": "RHL",
+    "scopeName": "source.rhl",
+    "patterns": [
+        { "include": "#keywords" },
+        { "include": "#types" },
+        { "include": "#modifiers" },
+        { "include": "#functions" },
+        { "include": "#strings" },
+        { "include": "#comments" },
+        { "include": "#numbers" },
+        { "include": "#punctuation" }
+    ],
+    "repository": {
+        "keywords": {
+            "patterns": [
+                {
+                    "name": "keyword.control.rhl",
+                    "match": "\\b(function|return|serialize_bin|serialize_ron|deserialize_bin|deserialize_ron|if|else|for|while)\\b"
+                }
+            ]
+        },
+        "types": {
+            "patterns": [
+                {
+                    "name": "storage.type.rhl",
+                    "match": "\\b(all_number|all_number_big|positive_only|positive_only_big|decimal_number|decimal_number_big|object|array_of|array_of_object|optional|boxed|bool|char|result|list_of|set_of|map_of|container|multi_read|shared_thread|mutable_anyway|inner_copy_mut|only_one_writer|multi_read_one_write)\\b"
+                }
+            ]
+        },
+        "modifiers": {
+            "patterns": [
+                {
+                    "name": "storage.modifier.rhl",
+                    "match": "\\b(const|var|heap)\\b"
+                }
+            ]
+        },
+        "functions": {
+            "patterns": [
+                {
+                    "name": "entity.name.function.rhl",
+                    "match": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\s*(?=\\()"
+                }
+            ]
+        },
+        "strings": {
+            "name": "string.quoted.double.rhl",
+            "begin": "\"",
+            "end": "\"",
+            "patterns": [
+                {
+                    "name": "constant.character.escape.rhl",
+                    "match": "\\\\."
+                }
+            ]
+        },
+        "comments": {
+            "patterns": [{
+                "name": "comment.line.double-slash.rhl",
+                "match": "//.*$"
+            }]
+        },
+        "numbers": {
+            "patterns": [
+                {
+                    "name": "constant.numeric.rhl",
+                    "match": "\\b\\d+(?:\\.\\d+)?\\b"
+                }
+            ]
+        },
+        "punctuation": {
+            "patterns": [
+                {
+                    "name": "punctuation.separator.rhl",
+                    "match": "[{}()\\[\\],.:;\\-><=>!]"
+                }
+            ]
+        }
+    }
+}

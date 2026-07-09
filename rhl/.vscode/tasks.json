@@ -1,0 +1,11 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build LSP",
+            "type": "shell",
+            "command": "cargo build --bin rhl-lsp",
+            "group": "build"
+        }
+    ]
+}
