@@ -1,7 +1,7 @@
 [package]
 name = "middle_level"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 default-run = "middle_level"  # Définit le binaire par défaut
 
 [[bin]]

@@ -1,7 +1,7 @@
 [package]
 name = "auto_versioning"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 authors = ["Ton Nom <ton.email@example.com>"]
 description = "Un watcher intelligent qui détecte les modifications et gère le versioning sémantique"
 license = "MIT"
