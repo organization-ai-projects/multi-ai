@@ -1,12 +1,16 @@
 mod commands;
+mod error;
+mod metrics;
+mod nosql_structural;
 mod scanner;
 mod schema;
-mod nosql_structural;
+mod workspace;
 
 use std::collections::HashMap;
 use clap::{Parser, Subcommand};
 use crate::nosql_structural::{collections::Collection, storage::StorageManager};
 use crate::schema::ProjectDocument;
+use crate::error::Result;
 use ron::de::from_str;
 use std::fs;
 use std::path::Path;
@@ -42,8 +46,8 @@ fn main() {
         Commands::Scan => {
             let storage = StorageManager::new(Path::new(".").to_path_buf());
             let collection = storage
-                .load::<schema::ProjectDocument>("workspace", true)
-                .unwrap_or_else(|_| ProjectsCollection::new_workspace());
+                .load::<ProjectDocument>("workspace", true)
+                .unwrap_or_else(|_| Collection::<ProjectDocument>::new("workspace"));
 
             if let Err(e) = commands::scan_workspace(&collection) {
                 eprintln!("Erreur scan : {}", e);

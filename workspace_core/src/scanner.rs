@@ -1,6 +1,5 @@
-use crate::nosql_structural::collections::Document;
-use crate::schema::projects::{ProjectType, ProjectDocument};
-use crate::nosql_structural::references::DbRef;
+use rustdb::api::Database;
+use crate::schema::ProjectDocument;
 use ron::de::from_str;
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -9,7 +8,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
 
 pub struct ScannedProject {
     pub path: PathBuf,
-    pub document: Document<ProjectDocument>,
+    pub data: ProjectDocument,
 }
 
 fn scan_dir_recursive(path: &Path, excluded: &[String], found: &mut Vec<ScannedProject>) {
@@ -27,18 +26,9 @@ fn scan_dir_recursive(path: &Path, excluded: &[String], found: &mut Vec<ScannedP
     if meta_path.exists() {
         if let Ok(content) = fs::read_to_string(&meta_path) {
             if let Ok(project_doc) = from_str::<ProjectDocument>(&content) {
-                let doc = Document {
-                    _id: Uuid::now_v7(),
-                    created_at: SystemTime::now()
-                        .duration_since(UNIX_EPOCH)
-                        .unwrap()
-                        .as_secs() as i64,
-                    data: project_doc,
-                    references: None,
-                };
                 found.push(ScannedProject {
                     path: path.to_path_buf(),
-                    document: doc,
+                    data: project_doc,
                 });
             }
         }

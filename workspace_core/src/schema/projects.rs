@@ -15,3 +15,5 @@ pub enum ProjectType {
     #[serde(rename = "tool")]
     Tool,
 }
+
+pub const COLLECTION_NAME: &str = "projects";

@@ -5,8 +5,10 @@ pub mod operations;
 pub mod references;
 pub mod storage;
 pub mod validation;
+pub mod search;
 
 pub use collections::Collection;
 pub use document::DocumentAccess;
 pub use operations::CollectionOperations;
 pub use storage::StorageManager;
+pub use search::DocumentMatcher;
