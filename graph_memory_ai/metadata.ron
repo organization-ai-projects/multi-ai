@@ -1,0 +1,7 @@
+(
+    type: "ai_agent",
+    id: "graph_memory_ai",
+    status: true,
+    memory: "memory/",
+    tags: ["core", "universal", "main"],
+)
