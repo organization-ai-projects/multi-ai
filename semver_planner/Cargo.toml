@@ -1,0 +1,10 @@
+[package]
+name = "semver_planner"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ron = { workspace = true }
+toml_edit = "0.21"
+serde = { workspace = true }
+chrono = "0.4"
