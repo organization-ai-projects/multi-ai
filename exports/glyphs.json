@@ -1,0 +1,45 @@
+{
+  "glyphs": {
+    "A": "vector:M(0,0)-L(5,10)-L(10,0)-L(7.5,5)-L(2.5,5); bitmap:5x7:040a111f111111"
+  },
+  "glyph_knowledge": {
+    "A": {
+      "letter": "A",
+      "variants": [
+        {
+          "bitmap": "bitmap:5x7:040a111f111111",
+          "vector": "M(0,0)-L(5,10)-L(10,0)-L(7.5,5)-L(2.5,5)",
+          "notes": null
+        },
+        {
+          "bitmap": "bitmap:5x7:02040911110909",
+          "vector": "M(0,0)-L(4,10)-L(7,0)-L(5.5,5)-L(2,5)",
+          "notes": "Variante #1: Version étroite"
+        },
+        {
+          "bitmap": "bitmap:5x7:010803040f080808",
+          "vector": "M(0,0)-L(7,10)-L(14,0)-L(10.5,5)-L(3.5,5)",
+          "notes": "Variante #2: Version large"
+        },
+        {
+          "bitmap": "bitmap:5x7:02050a041f111111",
+          "vector": "M(0,0)-C(5,15)-C(10,0)-L(8,5)-L(2,5)",
+          "notes": "Variante #3: Version stylisée avec courbes"
+        }
+      ],
+      "chosen_index": 0
+    }
+  },
+  "layouts": {
+    "titre": [
+      100.0,
+      50.0
+    ]
+  },
+  "styles": {
+    "titre": "font-size: 24px; font-weight: bold;"
+  },
+  "builder_blocks": {
+    "titre": "text \"ABCDEF\" at (100, 50) style: font-size: 24px; font-weight: bold;"
+  }
+}
