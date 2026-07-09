@@ -1,9 +1,11 @@
 mod types;
 mod observer;
-mod analysis;
+mod complexity;
+mod behavior;
+mod evaluation;
 
 pub use types::{Observation, ObservationType};
 pub use observer::Observer;
-
-// Re-export seulement ce qui est nécessaire
-pub(crate) use analysis::SpecimenAnalysis;
+pub use complexity::ComplexityAnalysis;
+pub use behavior::BehaviorAnalysis;
+pub use evaluation::SpecimenEvaluation;

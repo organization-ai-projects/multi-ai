@@ -1,0 +1,59 @@
+[package]
+name = "auto_versioning"
+version = "0.1.0"
+edition = "2021"
+authors = ["Ton Nom <ton.email@example.com>"]
+description = "Un watcher intelligent qui détecte les modifications et gère le versioning sémantique"
+license = "MIT"
+readme = "README.md"
+keywords = ["versioning", "semantic", "automation", "git", "publish"]
+categories = ["development-tools", "command-line-utilities"]
+
+[dependencies]
+notify = "6.1"
+serde = { version = "1.0", features = ["derive"] }
+bincode = "1.3"
+ron = "0.8"
+regex = "1.10"
+toml = "0.8"
+dialoguer = "0.11"                                  # Pour les confirmations utilisateur
+graphviz-rust = "0.2"                               # Pour la génération de .dot
+similar = "2.2"                                     # Pour les diffs
+reqwest = { version = "0.11", features = ["json"] }
+tokio = { version = "1.0", features = ["full"] }
+sha256 = "1.1"                                      # Pour les hashes de fichiers
+walkdir = "2.3"                                     # Pour scanner les dossiers
+env_logger = "0.10"                                 # Pour LogLevel
+petgraph = "0.6"                                    # Pour le DAG
+axum = "0.7"                                        # Pour l'API REST
+tempfile = "3.8"                                    # Pour les tests
+async-stream = "0.3"                                # Pour le streaming des updates
+thiserror = "1.0"
+tracing = "0.1"
+tracing-subscriber = "0.3"
+hyper = { version = "0.14", features = ["full"] }
+ndarray = "0.15"
+
+# Machine Learning léger
+smartcore = { version = "0.3", features = ["serde"] } # Algorithmes ML pure Rust
+linfa = "0.6"                                         # Framework ML léger en Rust
+linfa-trees = "0.6"                                   # Arbres de décision
+statistical = "1.0"                                   # Analyses statistiques
+
+# Gestion du temps et données
+chrono = { version = "0.4", features = ["serde"] }
+serde_json = { workspace = true }
+rand = "0.8"
+
+# Persistence et logging
+directories = "5.0" # Pour stocker les données d'apprentissage
+
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+strip = "debuginfo"
+
+[[bin]]
+name = "auto_versioning"
+path = "src/main.rs"

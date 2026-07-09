@@ -1,0 +1,8 @@
+(
+    timestamp: 1747901586,
+    ia_name: "mother_ai",
+    cpu_usage: 0.0,
+    temperature: 60.0,
+    action_taken: "TERMINATED",
+    details: "Processus IA \'mother_ai\' terminé avec status ExitStatus(ExitStatus(101))",
+)

@@ -1,0 +1,7 @@
+(
+    id: "f7ec42d1-9031-7bd2-b928-01884c7d989f",  // UUID complet pour unicité
+    short_id: "f7ec42d1",  // Version courte pour le nom du dossier
+    parent_id: None,
+    generation: 1,
+    created_at: 1703923200,
+)

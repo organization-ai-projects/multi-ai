@@ -1,0 +1,11 @@
+[
+    /*[0]*/ (
+        name: "mother_ai",
+        memory_path: "ai/mother_ai/src/memory/storage",
+        sandbox_path: "sandbox/mother_ai",
+        manifest_path: "ai/mother_ai/Cargo.toml",
+        args: [
+            /*[0]*/ "--verbose",
+        ],
+    ),
+]

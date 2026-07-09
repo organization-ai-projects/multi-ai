@@ -1,0 +1,23 @@
+name: Auto Version & Publish
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  version-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+
+      - name: Run Auto Versioning
+        run: |
+          cargo install --path .
+          auto_versioning . --force-publish
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}

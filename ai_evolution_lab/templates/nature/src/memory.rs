@@ -57,14 +57,18 @@ impl NatureMemory {
     }
 
     pub fn save_state(&self, path: &str) {
-        // Sauvegarde .ron pour lisibilité
+        // Sauvegarde au format RON
         if let Ok(state) = ron::ser::to_string_pretty(self, ron::ser::PrettyConfig::default()) {
-            std::fs::write(format!("{}.ron", path), state).ok();
+            if let Err(e) = std::fs::write(format!("{}.ron", path), state) {
+                eprintln!("Erreur lors de la sauvegarde de l'état (RON): {}", e);
+            }
         }
-        
-        // Sauvegarde .bin pour performance
+
+        // Sauvegarde au format binaire
         if let Ok(state) = bincode::serialize(self) {
-            std::fs::write(format!("{}.bin", path), state).ok();
+            if let Err(e) = std::fs::write(format!("{}.bin", path), state) {
+                eprintln!("Erreur lors de la sauvegarde de l'état (binaire): {}", e);
+            }
         }
     }
 }

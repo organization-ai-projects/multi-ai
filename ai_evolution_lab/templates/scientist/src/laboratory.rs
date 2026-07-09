@@ -1,4 +1,4 @@
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use uuid::uuid7;
 
 pub struct Laboratory {
@@ -15,14 +15,22 @@ pub struct CapturedSpecimen {
 }
 
 impl Laboratory {
+    pub fn new(path: &PathBuf) -> Self {
+        Self {
+            specimens: Vec::new(),
+            max_specimens: 100,
+        }
+    }
+
     pub fn capture_specimen(&mut self, env_path: &Path, specimen_id: &str) -> Option<String> {
         // Tente de capturer un spécimen vivant
         let source = env_path.join(specimen_id);
         if !source.exists() {
+            eprintln!("Le spécimen {} n'existe pas dans {}", specimen_id, env_path.display());
             return None;
         }
 
-        let capture_id = uuid7().to_string();
+        let capture_id = uuid::Uuid::new_v7().to_string();
         let target = Path::new("laboratory/specimens").join(&capture_id);
 
         // Copie le spécimen (ne le tue pas dans la nature)

@@ -1,5 +1,6 @@
 use serde::{Serialize, Deserialize};
 use std::collections::HashMap;
+use std::path::PathBuf;
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct DiscoveredMolecule {
@@ -39,6 +40,30 @@ impl ExperimentMemory {
 
     pub fn record_discovery(&mut self, molecule: String) {
         *self.discovered_molecules.entry(molecule).or_insert(0) += 1;
+    }
+
+    pub fn new_from_file(path: &PathBuf) -> Self {
+        if let Ok(content) = std::fs::read_to_string(path) {
+            ron::from_str(&content).unwrap_or_else(|_| Self::new())
+        } else {
+            Self::new()
+        }
+    }
+    
+    pub fn save(&self) {
+        // Sauvegarde au format RON pour lisibilité
+        if let Ok(state) = ron::ser::to_string_pretty(self, ron::ser::PrettyConfig::default()) {
+            if let Err(e) = std::fs::write("memory_state.ron", state) {
+                eprintln!("Erreur lors de la sauvegarde de la mémoire (RON): {}", e);
+            }
+        }
+
+        // Sauvegarde au format binaire pour performance
+        if let Ok(state) = bincode::serialize(self) {
+            if let Err(e) = std::fs::write("memory_state.bin", state) {
+                eprintln!("Erreur lors de la sauvegarde de la mémoire (binaire): {}", e);
+            }
+        }
     }
 }
 

@@ -1,0 +1,14 @@
+(
+    workspace_name: "multi_ai",
+    scan_paths: [
+        "./",  // Racine du workspace
+    ],
+    excluded_paths: [
+        "target",
+        "node_modules",
+        ".git",
+        ".vscode",
+        ".workspace_manager",
+        "workspace_manager",
+    ],
+)

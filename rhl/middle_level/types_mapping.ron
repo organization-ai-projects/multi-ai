@@ -1,0 +1,198 @@
+(
+    source_lang: "dsl",
+    types: {
+        // Types numériques avec noms explicites
+        "all_number": (
+            from: {
+                "dsl": "all_number"
+            },
+            to: "i32",
+            description: "Entier positif ou négatif"
+        ),
+        "all_number_big": (
+            from: {
+                "dsl": "all_number_big"
+            },
+            to: "i64",
+            description: "Entier positif ou négatif, grand"
+        ),
+        "positive_only": (
+            from: {
+                "dsl": "positive_only"
+            },
+            to: "u32",
+            description: "Entier positif"
+        ),
+        "positive_only_big": (
+            from: {
+                "dsl": "positive_only_big"
+            },
+            to: "u64",
+            description: "Entier positif, grand"
+        ),
+        "decimal_number": (
+            from: {
+                "dsl": "decimal_number"
+            },
+            to: "f32",
+            description: "Nombre décimal"
+        ),
+        "decimal_number_big": (
+            from: {
+                "dsl": "decimal_number_big"
+            },
+            to: "f64",
+            description: "Nombre décimal, grand"
+        ),
+        
+        // Types objets et collections
+        "object": (
+            from: {
+                "dsl": "object"
+            },
+            to: "struct",
+            description: "Type objet générique"
+        ),
+        "array_of_object": (
+            from: {
+                "dsl": "array_of_object"
+            },
+            to: "Vec",
+            description: "Tableau d'objets (comme array<object> en PHP)",
+            examples: ["array_of_object User", "array_of_object Config"]
+        ),
+
+        // Collections typées
+        "list_of": (
+            from: {
+                "dsl": "list_of"
+            },
+            to: "Vec",
+            description: "Tableau dynamique d'objets",
+            examples: ["list_of<string>", "list_of<all_number>"]
+        ),
+        "set_of": (
+            from: {
+                "dsl": "set_of"
+            },
+            to: "HashSet",
+            description: "Ensemble d'objets uniques",
+            examples: ["set_of<string>"]
+        ),
+        "map_of": (
+            from: {
+                "dsl": "map_of"
+            },
+            to: "HashMap",
+            description: "Dictionnaire clé-valeur",
+            examples: ["map_of<string, all_number>"]
+        ),
+
+        // Tous les conteneurs spécialisés
+        "multi_read": (
+            from: {
+                "dsl": "multi_read"
+            },
+            to: "Rc",
+            description: "Plusieurs lecteurs, pas d'écriture",
+            std_module: "std::rc::Rc"
+        ),
+        "shared_thread": (
+            from: {
+                "dsl": "shared_thread"
+            },
+            to: "Arc",
+            description: "Partagé entre threads"
+        ),
+        "mutable_anyway": (
+            from: {
+                "dsl": "mutable_anyway"
+            },
+            to: "RefCell",
+            description: "Mutable de n'importe où"
+        ),
+        "inner_copy_mut": (
+            from: {
+                "dsl": "inner_copy_mut"
+            },
+            to: "Cell",
+            description: "Copie interne avec mutabilité"
+        ),
+        "only_one_writer": (
+            from: {
+                "dsl": "only_one_writer"
+            },
+            to: "Mutex",
+            description: "Un seul écrivain à la fois"
+        ),
+        "multi_read_one_write": (
+            from: {
+                "dsl": "multi_read_one_write"
+            },
+            to: "RwLock",
+            description: "Multi-lecture, écriture unique"
+        ),
+
+        // Types de base
+        "bool": (
+            from: {
+                "dsl": "bool"
+            },
+            to: "bool"
+        ),
+        "char": (
+            from: {
+                "dsl": "char"
+            },
+            to: "char"
+        ),
+        "result": (
+            from: {
+                "dsl": "result"
+            },
+            to: "Result"
+        ),
+        "int": (
+            from: {
+                "dsl": "int"
+            },
+            to: "i32"
+        )
+    },
+    modifiers: {
+        "const": (
+            rust: "&",
+            modifier_type: "Ref",
+            keyword: "const"
+        ),
+        "var": (
+            rust: "&mut",
+            modifier_type: "Mut",
+            keyword: "var"
+        ),
+        "heap": (
+            rust: "Box<",
+            modifier_type: "Box",
+            keyword: "heap"
+        )
+    },
+    syntax: (
+        modifiers: [
+            (
+                rust: "&",
+                modifier_type: "Ref",
+                keyword: "const"
+            ),
+            (
+                rust: "&mut",
+                modifier_type: "Mut",
+                keyword: "var"
+            ),
+            (
+                rust: "Box<",
+                modifier_type: "Box",
+                keyword: "heap"
+            )
+        ]
+    )
+)

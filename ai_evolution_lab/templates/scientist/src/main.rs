@@ -17,7 +17,7 @@ struct Config {
     kind: String, 
     observation_interval_secs: u64,
     memory_path: PathBuf,
-    laboratory_path: PathBuf
+    laboratory_path: PathBuf,
 }
 
 fn load_config() -> Config {
@@ -27,20 +27,24 @@ fn load_config() -> Config {
 fn main() {
     let config = load_config();
     let mut memory = ExperimentMemory::new_from_file(&config.memory_path);
-    let mut observer = Observer::new("../nature/environment");
+    let mut observer = Observer::new(&config.laboratory_path);
     let mut lab = Laboratory::new(&config.laboratory_path);
 
     println!("Scientist [{}] démarre...", config.id);
     
     loop {
-        // Observer et apprendre
-        observer.scan_environment(&mut memory);
+        // Observer et analyser
+        let observations = observer.scan_environment();
+        for obs in observations {
+            memory.record_discovery(obs.source_code.unwrap_or_default());
+            lab.process_specimen(&obs);
+        }
         
         // Sauvegarder la mémoire
         memory.save();
 
         std::thread::sleep(std::time::Duration::from_secs(
-            config.observation_interval_secs
+            config.observation_interval_secs,
         ));
     }
 }

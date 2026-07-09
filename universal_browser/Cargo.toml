@@ -1,0 +1,14 @@
+[package]
+name = "universal_browser"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+pixels = "0.13"
+winit = { version = "0.29", features = ["rwh_05"] }
+log = "0.4"
+env_logger = "0.11"
+unilang = { path = "../unilang" }
+raw-window-handle = "0.5"
+reqwest = { version = "0.11", features = ["blocking"] }
+once_cell = "1.18"

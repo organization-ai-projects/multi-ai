@@ -1,5 +1,6 @@
-use super::{collections::Collection, storage::StorageManager};
+use super::{collections::Collection, storage::StorageManager, document::Document};
 use crate::schema::projects::{ProjectDocument, COLLECTION_NAME};
+use crate::nosql_structural::search::DocumentMatcher;
 use std::collections::HashMap;
 use std::path::Path;
 use uuid::Uuid;
@@ -15,14 +16,6 @@ pub trait CollectionOperations<T> {
 impl CollectionOperations<ProjectDocument> for Collection<ProjectDocument> {
     fn find(storage: &StorageManager, filter: HashMap<String, String>) -> Vec<ProjectDocument> {
         if let Ok(collection) = storage.load::<ProjectDocument>(COLLECTION_NAME, false) {
-            // Utiliser le cache si disponible
-            if let Some((field, value)) = filter.iter().next() {
-                if let Some(cached_results) = collection.find_by_cached_field(field, value) {
-                    return cached_results.iter().map(|d| d.data.clone()).collect();
-                }
-            }
-
-            // Fallback à la recherche standard
             collection.documents.into_iter()
                 .filter(|doc| filter.iter().all(|(k, v)| doc.data.matches(k, v)))
                 .map(|doc| doc.data)
@@ -40,8 +33,9 @@ impl CollectionOperations<ProjectDocument> for Collection<ProjectDocument> {
         let mut collection = storage.load::<ProjectDocument>(COLLECTION_NAME, false)
             .unwrap_or_else(|_| Collection::new(COLLECTION_NAME));
         
-        let id = doc._id;
-        collection.documents.push(doc.into());
+        let document = Document::from(doc);
+        let id = document._id;
+        collection.documents.push(document);
         storage.save(&collection)?;
         
         Ok(id)

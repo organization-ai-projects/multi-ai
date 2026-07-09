@@ -1,9 +1,10 @@
+use crate::nosql_structural::document::DocumentAccess;
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
+use std::hash::Hash;
 use uuid::Uuid;
 use std::collections::HashMap;
 use super::references::DbRef;
-use super::error::{DatabaseError, Result};
+use crate::error::{DatabaseError, Result};
 use super::cache::QueryCache;
 use std::num::NonZeroUsize;
 use super::document::Document;
@@ -15,7 +16,8 @@ pub struct Collection<T> {
     pub name: String,
     pub documents: Vec<Document<T>>,
     pub indexes: HashMap<String, Index>,
-    cached_fields: HashMap<String, QueryCache<String, Vec<Uuid>>>, // Ajout du cache
+    #[serde(default)]  // Utilise le trait Default si le champ est absent
+    cached_fields: CacheMap<String, Vec<Uuid>>, // Ajout du cache
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
@@ -34,7 +36,7 @@ impl<T: serde::Serialize> Collection<T> {
             name: name.to_string(),
             documents: Vec::new(),
             indexes: HashMap::new(),
-            cached_fields: HashMap::new(), // Initialisation du cache
+            cached_fields: CacheMap::new(), // Initialisation du cache
         }
     }
 
@@ -68,7 +70,7 @@ impl<T: serde::Serialize> Collection<T> {
         
         for doc in &self.documents {
             if let Some(value) = doc.get_field_value(field) {
-                let existing = cache.get(&value).unwrap_or_default();
+                let existing: Vec<Uuid> = cache.get(&value).unwrap_or_default();
                 let mut ids = existing;
                 ids.push(doc._id);
                 cache.insert(value, ids);
@@ -98,4 +100,65 @@ pub struct IndexOptions {
     pub unique: bool,
     pub sparse: bool,
     pub cached: bool,
+}
+
+#[derive(Debug, Clone)]
+pub struct CacheMap<K: Hash + Eq + Clone, V: Clone>(HashMap<String, QueryCache<K, V>>);
+
+impl<K: Hash + Eq + Clone, V: Clone> CacheMap<K, V> {
+    pub fn new() -> Self {
+        Self(HashMap::new())
+    }
+
+    pub fn insert(&mut self, key: String, value: QueryCache<K, V>) {
+        self.0.insert(key, value);
+    }
+
+    pub fn get(&self, key: &str) -> Option<&QueryCache<K, V>> {
+        self.0.get(key)
+    }
+}
+
+// Implémentation manuelle de Serialize
+impl<K: Hash + Eq + Clone + Serialize, V: Clone + Serialize> Serialize for CacheMap<K, V> {
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        let map: HashMap<String, Vec<(K, V)>> = self.0.iter()
+            .map(|(k, v)| (k.clone(), v.iter()))
+            .collect();
+        map.serialize(serializer)
+    }
+}
+
+// Implémentation manuelle de Deserialize
+impl<'de, K, V> Deserialize<'de> for CacheMap<K, V>
+where
+    K: Hash + Eq + Clone + Serialize + Deserialize<'de>,
+    V: Clone + Serialize + Deserialize<'de>,
+{
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let raw_map = HashMap::<String, Vec<(K, V)>>::deserialize(deserializer)?;
+        let mut cache_map = HashMap::new();
+        
+        for (key, items) in raw_map {
+            let cache = QueryCache::new(NonZeroUsize::new(1000).unwrap());
+            for (k, v) in items {
+                cache.insert(k, v);
+            }
+            cache_map.insert(key, cache);
+        }
+        
+        Ok(CacheMap(cache_map))
+    }
+}
+
+impl<K: Hash + Eq + Clone, V: Clone> Default for CacheMap<K, V> {
+    fn default() -> Self {
+        Self(HashMap::new())
+    }
 }

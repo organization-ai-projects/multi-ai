@@ -9,7 +9,7 @@ use std::process::Command;
 use std::time::{Instant, Duration};
 use serde::{Serialize, Deserialize};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct ExecutionResult {
     pub survived: bool,
     pub lifetime_ms: u64,
@@ -26,7 +26,6 @@ impl Executor {
 
     pub fn execute(&self, path: &Path) -> ExecutionResult {
         let start = Instant::now();
-        
         let output = Command::new("cargo")
             .arg("run")
             .current_dir(path)
@@ -36,19 +35,19 @@ impl Executor {
         if duration > self.max_runtime {
             return ExecutionResult {
                 survived: false,
-                lifetime_ms: duration.as_millis() as u64
+                lifetime_ms: duration.as_millis() as u64,
             };
         }
 
         match output {
             Ok(output) => ExecutionResult {
                 survived: output.status.success(),
-                lifetime_ms: duration.as_millis() as u64
+                lifetime_ms: duration.as_millis() as u64,
             },
             Err(_) => ExecutionResult {
                 survived: false,
-                lifetime_ms: 0
-            }
+                lifetime_ms: 0,
+            },
         }
     }
 }

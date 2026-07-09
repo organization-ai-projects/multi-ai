@@ -17,7 +17,7 @@ pub struct LifeForm {
 pub enum State {
     Alive,
     Dead,
-    Fossilized  // Mort mais traces conservées
+    Fossilized, // Mort mais traces conservées
 }
 
 impl LifeForm {
@@ -31,15 +31,16 @@ impl LifeForm {
             current_state: State::Alive,
             source_code,
             execution_results: Vec::new(),
-            parent_id
+            parent_id,
         }
     }
 
+    /// Met à jour l'état en fonction du résultat d'exécution
     pub fn update_state(&mut self, result: ExecutionResult) {
         self.last_seen = chrono::Utc::now().timestamp();
         self.total_lifetime += result.lifetime_ms;
-        self.execution_results.push(result);
-        
+        self.execution_results.push(result.clone());
+
         if !result.survived {
             self.current_state = State::Dead;
         }

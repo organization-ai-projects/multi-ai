@@ -1,0 +1,49 @@
+{
+  "name": "rhl-lang-support",
+  "displayName": "Rust High Level (RHL) DSL Support",
+  "description": "Support for Rust High Level language",
+  "version": "0.0.1",
+  "publisher": "organizationAI",
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": ["Programming Languages"],
+  "main": "./vscode-rhl/extension.js",
+  "contributes": {
+    "languages": [{
+      "id": "rhl",
+      "aliases": ["RHL", "Rust High Level"],
+      "extensions": [".rhl"],
+      "configuration": "./vscode-rhl/language-configuration.json",
+      "icon": {
+        "light": "./vscode-rhl/icons/rhl-light.png",
+        "dark": "./vscode-rhl/icons/rhl-dark.png"
+      }
+    }],
+    "grammars": [{
+      "language": "rhl",
+      "scopeName": "source.rhl",
+      "path": "./vscode-rhl/syntaxes/rhl.tmLanguage.json"
+    }]
+  },
+  "scripts": {
+    "postinstall": "pnpm compile",
+    "compile": "cargo build --bin rhl-lsp",
+    "package": "vsce package --no-dependencies --allow-star-activation",
+    "vscode:prepublish": "pnpm run compile",
+    "install-ext": "bash ./scripts/install.sh"
+  },
+  "dependencies": {
+    "vscode-languageclient": "^8.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.8.0",
+    "@types/vscode": "^1.75.0",
+    "typescript": "^5.2.2",
+    "@vscode/vsce": "^2.15.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/votre-repo/rhl"
+  }
+}

@@ -1,0 +1,20 @@
+#[derive(Debug, Clone, PartialEq)]
+pub enum Token {
+    Function,
+    Identifier(String),
+    LBrace,
+    RBrace,
+    Colon,
+    StringLiteral(String),
+    Number(f32),
+    Comma,
+    ParenOpen,
+    ParenClose,
+    OnEvent,
+    Run,
+    Let,
+    If,
+    Return,
+    Operator(String),
+    Newline,
+}

@@ -1,0 +1,12 @@
+[
+    {
+        "name": "String",
+        "description": "Texte UTF-8",
+        "example": "let s: String = \"texte\".to_string();"
+    },
+    {
+        "name": "Vec<T>",
+        "description": "Collection dynamique",
+        "example": "let v: Vec<String> = Vec::new();"
+    }
+]

@@ -1,0 +1,19 @@
+[package]
+name = "middle_level"
+version = "0.1.0"
+edition = "2021"
+default-run = "middle_level"  # Définit le binaire par défaut
+
+[[bin]]
+name = "rhl-lsp"
+path = "src/bin/lsp.rs"
+
+[dependencies]
+tower-lsp = "0.20"
+tokio = { version = "1.32", features = ["full"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+ron = "0.8"
+url = "2.4"
+regex = "1.10"  # Ajout de la dépendance regex
+lazy_static = "1.4"

@@ -1,0 +1,18 @@
+[package]
+name = "resource_monitor"
+version = "0.1.0"
+edition = "2021"
+description = "Moniteur de ressources système pour les instances d'IA avec protection contre les modifications non autorisées"
+
+[dependencies]
+sysinfo = "0.29.0"  # Pour récupérer les informations système
+tokio = { version = "1.28.0", features = ["full", "signal"] }  # Pour les tâches asynchrones et le signal Ctrl+C
+thiserror = "1.0.40"  # Pour la gestion des erreurs
+log = "0.4.17"  # Pour le logging
+env_logger = "0.10.0"  # Pour l'initialisation du logger
+which = "4.4.0"  # Pour vérifier si des commandes sont disponibles
+ring = "0.16.20"  # Pour la cryptographie
+seccomp = { version = "0.1.2", optional = true }  # Pour le filtrage des appels système (Linux uniquement)
+
+[features]
+seccomp_filter = ["seccomp"]  # Fonctionnalité optionnelle pour le filtrage des appels système

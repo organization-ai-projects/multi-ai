@@ -1,0 +1,17 @@
+[workspace]
+members = [
+    "semver_planner",
+    "workspace_manager",
+    "ai_assistant",
+    "version_watcher",
+    "ide_web",
+    "auto_versioning",
+    "experiment_ai",
+    "rhl/compiler",
+]
+resolver = "2"
+
+[workspace.dependencies]
+ron = "0.12.2"
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.150"

@@ -1,0 +1,52 @@
+# Rust
+/target/
+**/target/
+**/*.rs.bk
+*.pdb
+*.exe
+
+# Node/JavaScript
+node_modules/
+**/node_modules/
+**/dist/
+.npm
+.pnpm-store/
+*.tsbuildinfo
+.env
+.env.local
+.env.*.local
+
+# VSCode Extension
+*.vsix
+.vscode-test/
+out/
+
+# Système
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs et debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+debug.log
+*.log
+
+# Build et production
+/build
+/dist
+.next
+.nuxt
+.output
+output/
+
+# Binaires générés / caches
+*.bin
+*.tmp
+*.cache
+*.bak
+*.old
+# Generated files
+generated/

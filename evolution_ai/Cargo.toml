@@ -1,0 +1,26 @@
+[package]
+name = "evolution_ai"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rand = "0.8.5"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+rayon = "1.7"
+ndarray = "0.15"
+crossbeam = "0.8"
+parking_lot = "0.12"
+libloading = "0.7"
+walkdir = "2.3"
+syn = { version = "2.0", features = ["full", "parsing"] }
+quote = "1.0"
+proc-macro2 = "1.0"
+axum = "0.6"
+tokio = { version = "1.0", features = ["full"] }
+tower-http = { version = "0.4", features = ["fs", "cors"] }
+chrono = { version = "0.4", features = ["serde"] }
+ron = "0.8"
+glob = "0.3"
+tempfile = "3.8"
+ctrlc = { version = "3.4", features = ["termination"] }

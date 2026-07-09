@@ -1,0 +1,6 @@
+serialize_bin(path:"x.bin", my_data1)
+serialize_ron(my_data, path:"r.ron")
+deserialize_ron(data, path:"oui.ron")
+function my_function(x: all_number, y: all_number) {
+    return x + y
+}

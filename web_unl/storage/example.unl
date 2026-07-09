@@ -1,0 +1,18 @@
+function view_Home {
+    Text { content: "Accueil Example" }
+    Text { content: "Démonstration du langage UNL" }
+    Button { content: "Page 1" on_event: click view_Page1 }
+    Button { content: "Page 2" on_event: click view_Page2 }
+}
+
+function view_Page1 {
+    Text { content: "Page 1" }
+    Text { content: "Contenu de la première page" }
+    Button { content: "Retour" on_event: click view_Home }
+}
+
+function view_Page2 {
+    Text { content: "Page 2" }
+    Text { content: "Contenu de la deuxième page" }
+    Button { content: "Retour" on_event: click view_Home }
+}

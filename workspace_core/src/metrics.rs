@@ -6,9 +6,19 @@ pub struct DatabaseMetrics {
 }
 
 impl DatabaseMetrics {
-    pub fn track_query(&mut self, collection: &str, operation: &str) {
+    pub fn track_query(&mut self, collection: String, operation: String) {
         let duration = self.query_timer.elapsed();
-        histogram!("database.query.duration", duration, "collection" => collection, "operation" => operation);
-        counter!("database.query.count", 1, "collection" => collection, "operation" => operation);
+        histogram!(
+            "database.query.duration",
+            duration,
+            "collection" => collection.clone(),
+            "operation" => operation.clone()
+        );
+        counter!(
+            "database.query.count",
+            1,
+            "collection" => collection,
+            "operation" => operation
+        );
     }
 }

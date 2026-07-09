@@ -1,0 +1,20 @@
+(
+    weights: {
+        // Breaking changes = major
+        "pub trait": "major",
+        "pub struct": "major",
+        "#[breaking]": "major",
+        
+        // New features = minor
+        "pub fn": "minor",
+        "pub mod": "minor",
+        "#[feature]": "minor",
+        "impl ": "minor",
+        
+        // Fixes = patch
+        "fix:": "patch",
+        "bugfix:": "patch",
+        "#[deprecated]": "patch",
+        "// TODO": "patch",
+    }
+)

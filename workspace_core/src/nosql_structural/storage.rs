@@ -33,7 +33,7 @@ impl StorageManager {
     }
 
     // Charge selon le contexte (humain vs système)
-    pub fn load<T: serde::de::DeserializeOwned>(&self, collection_name: &str, human_readable: bool) -> Result<Collection<T>, String> {
+    pub fn load<T: serde::de::DeserializeOwned + serde::Serialize>(&self, collection_name: &str, human_readable: bool) -> Result<Collection<T>, String> {
         let path = if human_readable {
             self.base_path.join(format!("{}.ron", collection_name))
         } else {
