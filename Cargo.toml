@@ -8,6 +8,10 @@ members = [
     "auto_versioning",
     "experiment_ai",
     "rhl/compiler",
+    "ai_evolution_lab",
+    "automate_projects",
+    "rustdb",
+    "workspace_core",
 ]
 resolver = "2"
 
