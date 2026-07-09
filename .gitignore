@@ -48,3 +48,5 @@ output/
 *.cache
 *.bak
 *.old
+# Generated files
+generated/
