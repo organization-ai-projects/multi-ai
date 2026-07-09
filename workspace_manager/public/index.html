@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Workspace Manager</title>
+  <link rel="stylesheet" href="/static/css/main.css">
+</head>
+<body>
+  <!-- Application SPA -->
+  <div id="app">
+    <!-- Le contenu sera injecté dynamiquement par le routeur -->
+    <div id="app-loading">
+      <div class="loading-spinner"></div>
+      Chargement de l'application...
+    </div>
+  </div>
+
+  <!-- Templates -->
+  <template id="home-template">
+    <!-- Composant: Header -->
+    <header id="header"></header>
+    
+    <main>
+      <!-- Composant: Message d'erreur/information -->
+      <div id="error-message" class="hidden"></div>
+      
+      <!-- Composant: Liste des services -->
+      <section id="services-section">
+        <h2>Services</h2>
+        <div id="services-list">
+          <p>Chargement des services...</p>
+        </div>
+      </section>
+    </main>
+  </template>
+
+  <!-- Scripts API -->
+  <script src="/static/js/api.js"></script>
+  
+  <!-- Scripts Composants -->
+  <script src="/static/js/components/ErrorHandler.js"></script>
+  <script src="/static/js/components/Header.js"></script>
+  <script src="/static/js/components/ServiceList.js"></script>
+  
+  <!-- Scripts Core -->
+  <script src="/static/js/core/router.js"></script>
+  <script src="/static/js/core/app.js"></script>
+  
+  <!-- Scripts Views -->
+  <script src="/static/js/views/HomeView.js"></script>
+
+  <!-- Script de démarrage -->
+  <script>
+    // Variable globale pour l'application
+    let appInstance;
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      try {
+        // Initialiser l'application
+        appInstance = new App();
+        window.app = appInstance; // Rendre accessible globalement
+        appInstance.init();
+        
+        console.log('Application initialisée avec succès');
+      } catch (error) {
+        console.error('Erreur lors de l\'initialisation de l\'application:', error);
+        document.getElementById('app-loading').innerHTML = 
+          `<div class="error-startup">Erreur de chargement: ${error.message}<br>Vérifiez la console pour plus de détails.</div>`;
+      }
+    });
+  </script>
+</body>
+</html>
