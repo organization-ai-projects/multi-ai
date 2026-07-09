@@ -1,0 +1,31 @@
+(
+    objectives: [
+        (
+            name: "rust_code",
+            description: "Générer du code Rust valide qui compile",
+            score: 0,
+            threshold: 5,
+            success_count: 0,
+            fail_count: 0,
+            achieved: false
+        ),
+        (
+            name: "flat_memory",
+            description: "Créer une structure de données basique (Vec, HashMap)",
+            score: 0,
+            threshold: 8,
+            success_count: 0,
+            fail_count: 0,
+            achieved: false
+        ),
+        (
+            name: "visual_memory",
+            description: "Visualiser les données avec des graphiques (plotters, eframe)",
+            score: 0,
+            threshold: 15,
+            success_count: 0,
+            fail_count: 0,
+            achieved: false
+        )
+    ]
+)

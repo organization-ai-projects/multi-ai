@@ -1,0 +1,12 @@
+[
+    {
+        "name": "struct",
+        "pattern": "struct Name { field: Type }",
+        "example": "struct Memory { successes: Vec<String>, failures: Vec<String> }"
+    },
+    {
+        "name": "impl",
+        "pattern": "impl Name { fn method() {} }",
+        "example": "impl Memory { fn add_success(s: String) {} }"
+    }
+]
