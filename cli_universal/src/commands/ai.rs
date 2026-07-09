@@ -1,4 +1,4 @@
-use clap::{Subcommand, Args};
+use clap::{Subcommand};
 
 #[derive(Subcommand)]
 pub enum AiCommands {
