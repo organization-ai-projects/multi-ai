@@ -1,6 +1,6 @@
 use chrono::{DateTime, Utc};
 
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, bincode_next::Encode, bincode_next::Decode)]
 pub struct MemoryEvent {
     pub generation: usize,
     pub timestamp: DateTime<Utc>,

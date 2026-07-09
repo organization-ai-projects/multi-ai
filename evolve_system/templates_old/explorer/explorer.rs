@@ -9,7 +9,7 @@ pub struct Explorer {
 
 impl Explorer {
     pub fn meta_explore(&mut self) {
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
 
         if self.strategies.len() < 2 {
             return;

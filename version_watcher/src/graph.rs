@@ -3,20 +3,20 @@ use serde::{Serialize, Deserialize};
 use std::collections::HashMap;
 use std::path::Path;
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, bincode_next::Encode, bincode_next::Decode)]
 pub enum Impact {
     Patch,
     Minor,
     Major,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, bincode_next::Encode, bincode_next::Decode)]
 pub struct VersionGraph {
     pub nodes: HashMap<String, GraphNode>,
     pub edges: Vec<(String, String)>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, bincode_next::Encode, bincode_next::Decode)]
 pub struct GraphNode {
     pub id: String,
     pub impact: Impact,
@@ -106,7 +106,7 @@ pub fn load_graph() -> VersionGraph {
 fn restore_snapshot(node: &GraphNode) {
     let bin_path = format!(".graphver/snapshots/{}.bin", node.id);
     if let Ok(snapshot_data) = std::fs::read(&bin_path) {
-        if let Ok(snapshot) = bincode::deserialize::<VersionSnapshot>(&snapshot_data) {
+        if let Ok(snapshot) = bincode_next::decode_from_slice::<VersionSnapshot, _>(&snapshot_data, bincode_next::config::standard()).map(|(v, _)| v) {
             // Restaurer les fichiers (à implémenter)
             println!("🔄 Restauration des fichiers pour le snapshot : {:?}", snapshot);
         }

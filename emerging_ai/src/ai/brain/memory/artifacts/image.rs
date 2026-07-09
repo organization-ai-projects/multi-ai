@@ -3,7 +3,7 @@ use uuid::Uuid;
 
 //contient les artéfacts d'image de l'IA.
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, bincode_next::Encode, bincode_next::Decode)]
 pub struct MemoryImage {
     pub uuid: Uuid,
     pub bytes: Vec<u8>,        // Contenu binaire de l’image

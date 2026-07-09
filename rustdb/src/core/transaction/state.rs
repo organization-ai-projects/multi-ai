@@ -1,7 +1,7 @@
 use uuid::Uuid;
 use serde::{Serialize, Deserialize};
 
-#[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 pub enum TransactionState {
     Active,
     Committing,

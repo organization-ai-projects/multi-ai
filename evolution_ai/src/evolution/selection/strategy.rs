@@ -39,7 +39,7 @@ impl SelectionStrategy {
             return None;
         }
 
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         let mut select_one = |exclude: Option<&String>| {
             let mut sum = 0.0;
             let target = rng.gen::<f64>() * total_fitness;
@@ -67,11 +67,11 @@ impl SelectionStrategy {
             return None;
         }
 
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         let mut select_one = || {
             let mut best: Option<(String, f64)> = None;
             for _ in 0..tournament_size {
-                let candidate = &performers[rng.gen_range(0..performers.len())];
+                let candidate = &performers[rng.random_range(0..performers.len())];
                 if best.is_none() || candidate.1 > best.as_ref().unwrap().1 {
                     best = Some(candidate.clone());
                 }

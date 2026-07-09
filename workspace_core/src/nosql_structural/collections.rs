@@ -10,7 +10,7 @@ use std::num::NonZeroUsize;
 use super::document::Document;
 
 // Structure de base d'une collection dans notre système
-#[derive(Debug, Deserialize, Serialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, bincode_next::Encode, bincode_next::Decode)]
 pub struct Collection<T> {
     pub _id: Uuid,
     pub name: String,
@@ -20,7 +20,7 @@ pub struct Collection<T> {
     cached_fields: CacheMap<String, Vec<Uuid>>, // Ajout du cache
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, bincode_next::Encode, bincode_next::Decode)]
 pub struct Index {
     pub field: String,
     pub unique: bool,

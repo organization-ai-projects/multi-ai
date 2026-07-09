@@ -3,7 +3,7 @@ use uuid::Uuid;
 
 // Gère uniquement les artefacts de mémoire.
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, bincode_next::Encode, bincode_next::Decode)]
 pub struct ArtifactMemory {
     pub log_uuids: Vec<Uuid>,       // UUIDs des logs
     pub image_uuids: Vec<Uuid>,     // UUIDs des images

@@ -5,7 +5,7 @@ use super::links::MemoryLinks;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-#[derive(Debug, Default, Serialize, Deserialize)]
+#[derive(Debug, Default, Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 pub(crate) struct LinksManager { // Visibilité restreinte à `memory`
     pub(crate) links: MemoryLinks<MemoryLink>,
     tags: HashMap<(usize, usize), Vec<String>>, // Associe des tags aux liens par leurs IDs (from, to)

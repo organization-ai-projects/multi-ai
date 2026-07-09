@@ -5,7 +5,7 @@ use petgraph::Directed;
 use std::collections::HashMap;
 use crate::capacities::mutate_ast::Strategy;
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, bincode_next::Encode, bincode_next::Decode)]
 pub enum NodeType {
     SourceSnippet { code: String, file: String },
     MutatedSnippet {
@@ -17,7 +17,7 @@ pub enum NodeType {
     },
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, bincode_next::Encode, bincode_next::Decode)]
 pub struct MemoryNode {
     pub id: Uuid,
     pub kind: NodeType,
@@ -32,7 +32,7 @@ pub struct MemoryNode {
     pub strategy_weights: HashMap<Strategy, f64>, // Poids des stratégies
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, bincode_next::Encode, bincode_next::Decode)]
 pub struct MemoryEdge {
     pub description: String,
     pub weight: u32, // Nombre d'expositions
@@ -41,14 +41,14 @@ pub struct MemoryEdge {
     pub is_dependency: bool,  // Indique si c'est une relation de dépendance
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, bincode_next::Encode, bincode_next::Decode)]
 pub struct FileExtensionInfo {
     pub extension: String,
     pub occurrences: u32,
     pub associated_with_rust: bool,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, bincode_next::Encode, bincode_next::Decode)]
 pub struct MemoryGraph {
     // Stockage graphique (pas direct Petgraph pour sérialisation facile)
     pub nodes: HashMap<Uuid, MemoryNode>,
@@ -180,7 +180,7 @@ impl MemoryGraph {
     }
 
     pub fn pick_random_snippet(&self) -> Option<(String, Uuid)> {
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         self.nodes.values().filter_map(|node| {
             if let NodeType::SourceSnippet { code, .. } = &node.kind {
                 Some((code.clone(), node.id))

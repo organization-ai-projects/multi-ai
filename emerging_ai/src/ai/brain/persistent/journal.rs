@@ -2,14 +2,14 @@ use serde::{Serialize, Deserialize};
 use std::fs;
 use std::path::Path;
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, bincode_next::Encode, bincode_next::Decode)]
 pub struct JournalEntry {
     pub action: String, // "update", "delete", etc.
     pub entity_type: String, // "node", "link", etc.
     pub uuid: String,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, bincode_next::Encode, bincode_next::Decode)]
 pub struct Journal {
     pub entries: Vec<JournalEntry>,
 }

@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use serde_json::Value;
 use serde::{Serialize, Deserialize};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 pub struct Query {
     pub filter: HashMap<String, Value>,
     pub sort: Option<Vec<(String, i32)>>,

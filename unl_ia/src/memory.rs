@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use std::fs;
 
 // Structure représentant une variante d'un glyphe avec représentation bitmap et vectorielle
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, bincode_next::Encode, bincode_next::Decode)]
 pub struct GlyphVariant {
     pub bitmap: String,
     pub vector: String,
@@ -11,7 +11,7 @@ pub struct GlyphVariant {
 }
 
 // Structure représentant les connaissances sur un glyphe spécifique
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, bincode_next::Encode, bincode_next::Decode)]
 pub struct GlyphKnowledge {
     pub letter: char,
     pub variants: Vec<GlyphVariant>,
@@ -20,7 +20,7 @@ pub struct GlyphKnowledge {
 
 // Cette structure représente une mémoire pour stocker des éléments graphiques et de mise en page
 // tels que des glyphes, des dispositions, des styles, et des blocs de construction
-#[derive(Serialize, Deserialize, Default)]
+#[derive(Serialize, Deserialize, Default, bincode_next::Encode, bincode_next::Decode)]
 pub struct Memory {
     pub glyphs: HashMap<String, String>,
     pub glyph_knowledge: HashMap<char, GlyphKnowledge>,
@@ -49,7 +49,7 @@ impl Memory {
     fn load_bin(memory_dir: &str) -> Option<Self> {
         fs::read(format!("{}/memory.bin", memory_dir))
             .ok()
-            .and_then(|data| bincode::deserialize(&data).ok())
+            .and_then(|data| bincode_next::decode_from_slice(&data, bincode_next::config::standard()).map(|(v, _)| v).ok())
     }
 
     fn load_ron(memory_dir: &str) -> Option<Self> {
@@ -68,7 +68,7 @@ impl Memory {
     }
 
     fn save_bin(&self, memory_dir: &str) {
-        if let Ok(data) = bincode::serialize(self) {
+        if let Ok(data) = bincode_next::encode_to_vec(self, bincode_next::config::standard()) {
             fs::create_dir_all(memory_dir).ok();
             fs::write(format!("{}/memory.bin", memory_dir), data).ok();
         }

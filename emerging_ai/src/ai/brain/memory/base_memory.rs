@@ -5,7 +5,7 @@ use uuid::Uuid;
 //les uuid des nœuds et des liens
 //utilise ce qui a déjà été défini dans memory/nodes.rs et memory/links.rs
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, bincode_next::Encode, bincode_next::Decode)]
 pub struct BaseMemory {
     pub node_uuids: Vec<Uuid>,       // UUIDs des nœuds
     pub link_uuids: Vec<Uuid>,       // UUIDs des liens

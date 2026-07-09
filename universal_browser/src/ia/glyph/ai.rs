@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 /// Commandes vectorielles (type SVG-like)
-#[derive(Clone, Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug, bincode_next::Encode, bincode_next::Decode)]
 pub enum VectorCommand {
     MoveTo(f32, f32),
     LineTo(f32, f32),
@@ -10,13 +10,13 @@ pub enum VectorCommand {
 }
 
 /// Données vectorielles d'un glyphe
-#[derive(Clone, Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug, bincode_next::Encode, bincode_next::Decode)]
 pub struct GlyphPath {
     pub commands: Vec<VectorCommand>,
 }
 
 /// Sortie typographique complète : pixel + vecteur
-#[derive(Clone, Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug, bincode_next::Encode, bincode_next::Decode)]
 pub struct GlyphOutput {
     pub bitmap: Vec<bool>,
     pub vector: GlyphPath,
@@ -25,7 +25,7 @@ pub struct GlyphOutput {
 }
 
 /// Mémoire persistante de tous les glyphes connus
-#[derive(Serialize, Deserialize, Default)]
+#[derive(Serialize, Deserialize, Default, bincode_next::Encode, bincode_next::Decode)]
 pub struct GlyphMemory {
     pub data: HashMap<(char, String), GlyphOutput>,
 }
@@ -227,7 +227,7 @@ impl GlyphIA {
 
     /// Sauvegarde mémoire `.bin` (plus compact)
     pub fn save_to_bin(&self, path: &str) {
-        if let Ok(serialized) = bincode::serialize(&self.memory) {
+        if let Ok(serialized) = bincode_next::encode_to_vec(&self.memory, bincode_next::config::standard()) {
             std::fs::write(path, serialized).ok();
         }
     }
@@ -235,7 +235,7 @@ impl GlyphIA {
     /// Recharge `.bin`
     pub fn load_from_bin(path: &str) -> Self {
         if let Ok(data) = std::fs::read(path) {
-            if let Ok(mem) = bincode::deserialize(&data[..]) {
+            if let Ok(mem) = bincode_next::decode_from_slice(&data[..], bincode_next::config::standard()).map(|(v, _)| v) {
                 return Self { memory: mem };
             }
         }

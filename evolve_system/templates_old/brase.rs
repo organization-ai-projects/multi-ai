@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 pub struct GraphNode {
     pub id: String,
     pub label: String,
@@ -9,7 +9,7 @@ pub struct GraphNode {
     pub neighbors: HashSet<String>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 pub struct Graph {
     pub nodes: HashMap<String, GraphNode>,
 }
@@ -32,7 +32,7 @@ impl Graph {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 pub struct VectorIndex {
     pub embeddings: HashMap<String, Vec<f32>>, // id -> vecteur
 }

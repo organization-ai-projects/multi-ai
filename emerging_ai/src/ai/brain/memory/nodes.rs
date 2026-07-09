@@ -3,7 +3,7 @@ use uuid::Uuid;
 
 //contient les noeuds du graphe mémoire de l'IA.
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, bincode_next::Encode, bincode_next::Decode)]
 pub struct MemoryNode {
     pub uuid: Uuid,           // Identifiant unique du nœud
     pub label: String,        // Étiquette ou nom du nœud

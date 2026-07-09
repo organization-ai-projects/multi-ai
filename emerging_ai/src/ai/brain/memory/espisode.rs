@@ -4,7 +4,7 @@ use uuid::Uuid;
 //contient la mémoire épisodique de l'IA
 //utilise les artefacts pour retenir des patterns
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, bincode_next::Encode, bincode_next::Decode)]
 pub struct MemoryEpisode {
     pub uuid: Uuid,           // UUID unique de l'épisode
     pub node_id: Uuid,        // Noeud principal concerné

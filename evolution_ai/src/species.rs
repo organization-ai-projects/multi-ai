@@ -5,7 +5,7 @@ use std::hash::Hash;
 
 use crate::ai_manager::AIManager;
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash, bincode_next::Encode, bincode_next::Decode)]
 pub enum SpeciesType {
     ByteMutator, // Mutation au niveau bytes
     AstMutator,  // Mutation structurelle (AST)
@@ -15,8 +15,8 @@ pub enum SpeciesType {
 
 impl SpeciesType {
     pub fn random() -> Self {
-        let mut rng = rand::thread_rng();
-        match rng.gen_range(0..4) {
+        let mut rng = rand::rng();
+        match rng.random_range(0..4) {
             0 => Self::ByteMutator,
             1 => Self::AstMutator,
             2 => Self::SafeMutator,
@@ -61,9 +61,9 @@ impl SpeciesType {
     }
 
     pub fn should_crossover_interspecies(&self, other: &SpeciesType) -> bool {
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         // Très rare crossover inter-espèces (0.1%)
-        rng.gen_bool(0.001)
+        rng.random_bool(0.001)
     }
 }
 
@@ -74,7 +74,7 @@ pub struct MutationConfig {
     pub rollback_on_error: bool,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 pub struct Lineage {
     pub species: SpeciesType,
     pub ancestor_id: String,
@@ -82,7 +82,7 @@ pub struct Lineage {
     pub mutations_survived: usize,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 pub struct SpeciesStats {
     pub total_generations: usize,
     pub peak_performance: f64,

@@ -21,7 +21,7 @@ impl CrossoverStrategy {
         let all_functions: Vec<_> = functions.iter().flat_map(|f| f.keys()).collect();
 
         for func_name in all_functions {
-            if rng.gen_bool(self.crossover_rate) {
+            if rng.random_bool(self.crossover_rate) {
                 // Utilisation de rng pour décider aléatoirement
                 if let Some(func) = functions.iter().filter_map(|f| f.get(func_name)).next() {
                     result.push_str(func);

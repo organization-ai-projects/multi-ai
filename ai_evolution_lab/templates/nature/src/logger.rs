@@ -3,7 +3,7 @@ use std::fs::{self, OpenOptions};
 use std::io::Write;
 use std::path::PathBuf;
 
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, bincode_next::Encode, bincode_next::Decode)]
 pub struct LogEntry {
     pub timestamp: i64,
     pub event: String,

@@ -1,66 +1,38 @@
-use crate::version::{SemVer, VersionSnapshot};
-use crate::loader::get_latest_impact;
-use std::fs::{write, create_dir_all};
-use toml_edit::{Document, value};
 use crate::loader::Snapshot;
-use serde::{Serialize, Deserialize};
-use crate::git::GitRepository;
+use crate::loader::get_latest_impact;
+use crate::version::SemVer;
+use serde::{Deserialize, Serialize};
+use std::fs::{create_dir_all, write};
+use toml_edit::{Document, value};
 
-#[derive(Debug, Clone, Serialize, Deserialize)] // Ajout de `Deserialize`
+#[derive(Debug, Clone, Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 pub enum Impact {
     Patch,
     Minor,
     Major,
 }
 
-pub fn bump_from_snapshots(repo: &GitRepository) -> String {
-    let snapshots = repo.get_snapshots();
-    let latest_snapshot = snapshots.last().expect("Aucun snapshot trouvé");
-
-    let new_version = match latest_snapshot.impact {
-        Impact::Major => repo.bump_major(),
-        Impact::Minor => repo.bump_minor(),
-        Impact::Patch => repo.bump_patch(),
-    };
-
-    new_version
-}
-
-pub fn generate_changelog(version: &str, impact: &Impact, files: &[String]) -> String {
-    let title = match impact {
-        Impact::Major => "🚨 Breaking Changes",
-        Impact::Minor => "✨ New Features",
-        Impact::Patch => "🛠️ Bug Fixes",
-    };
-
-    let mut result = format!("# Version {}\n\n## {}\n", version, title);
-
-    for file in files {
-        result.push_str(&format!("- `{}` modifié\n", file));
-    }
-
-    result
-}
-
 pub fn bump_from_snapshots() -> SemVer {
     let impact = get_latest_impact().unwrap_or(Impact::Patch);
-    let mut ver = load_current_version().unwrap_or(SemVer { major: 0, minor: 1, patch: 0 });
-
-    // Récupérer le dernier snapshot et le traiter
+    let mut ver = load_current_version().unwrap_or(SemVer {
+        major: 0,
+        minor: 1,
+        patch: 0,
+    });
     if let Some(snapshot) = get_latest_snapshot() {
         process_snapshot(&snapshot);
         generate_changelog(&ver, &snapshot);
     }
-
     ver.bump(&impact);
     write_semver(&ver);
     update_cargo_toml(&ver);
-
     ver
 }
 
 fn load_current_version() -> Option<SemVer> {
-    std::fs::read_to_string("semver.ron").ok().and_then(|s| ron::from_str(&s).ok())
+    std::fs::read_to_string("semver.ron")
+        .ok()
+        .and_then(|s| ron::from_str(&s).ok())
 }
 
 fn write_semver(ver: &SemVer) {
@@ -77,24 +49,25 @@ fn update_cargo_toml(ver: &SemVer) {
 
 pub fn generate_changelog(version: &SemVer, snapshot: &Snapshot) {
     let changelog_dir = ".graphver/changelog";
-    let changelog_path = format!("{}/v{}.{}.{}.md", changelog_dir, version.major, version.minor, version.patch);
-
+    let changelog_path = format!(
+        "{}/v{}.{}.{}.md",
+        changelog_dir, version.major, version.minor, version.patch
+    );
     create_dir_all(changelog_dir).unwrap();
-
     let changelog_content = format!(
         "# Changelog v{}.{}.{}\n\n- Date: {}\n- Impact: {:?}\n- Hash: {}\n\n## Modifications\n- Fichiers modifiés : (à implémenter)",
-        version.major, version.minor, version.patch, chrono::Utc::now(), snapshot.impact, snapshot.hash // Utilisation du champ `hash`
+        version.major,
+        version.minor,
+        version.patch,
+        chrono::Utc::now(),
+        snapshot.impact,
+        snapshot.hash
     );
-
     std::fs::write(changelog_path, changelog_content).unwrap();
 }
 
 fn process_snapshot(snapshot: &Snapshot) {
-    println!(
-        "Impact: {:?}, Hash: {}",
-        snapshot.impact, // Champ public
-        snapshot.hash    // Champ public
-    );
+    println!("Impact: {:?}, Hash: {}", snapshot.impact, snapshot.hash);
 }
 
 fn get_latest_snapshot() -> Option<Snapshot> {
@@ -102,12 +75,11 @@ fn get_latest_snapshot() -> Option<Snapshot> {
     if !path.exists() {
         return None;
     }
-
-    let mut entries: Vec<_> = std::fs::read_dir(path).ok()?
+    let mut entries: Vec<_> = std::fs::read_dir(path)
+        .ok()?
         .filter_map(|e| e.ok())
         .filter(|e| e.path().extension().and_then(|ext| ext.to_str()) == Some("ron"))
         .collect();
-    
     entries.sort_by_key(|e| {
         e.metadata()
             .ok()
@@ -115,7 +87,6 @@ fn get_latest_snapshot() -> Option<Snapshot> {
             .map(std::cmp::Reverse)
             .unwrap_or(std::cmp::Reverse(std::time::SystemTime::UNIX_EPOCH))
     });
-    
     if let Some(latest) = entries.first() {
         let content = std::fs::read_to_string(latest.path()).ok()?;
         ron::from_str(&content).ok()

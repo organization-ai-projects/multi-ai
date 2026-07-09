@@ -6,7 +6,7 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use serde::{Serialize, Deserialize};
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 struct ChangeHistory {
     caused_issues: bool,
     patterns: Vec<String>,

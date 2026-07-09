@@ -1,12 +1,11 @@
-use super::document::{Document, DocumentAccess};
-use super::cache::QueryCache;
-use super::references::DbRef;
-use serde::{Deserialize, Serialize};
-use uuid::Uuid;
-use std::collections::HashMap;
-use super::{Document, Query, error::Result};
+use crate::Query;
 
-#[derive(Debug, Serialize, Deserialize)]
+use super::document::{Document, DocumentAccess};
+use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
+use uuid::Uuid;
+
+#[derive(Debug, Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 pub struct Collection<T> {
     pub _id: Uuid,
     pub name: String,
@@ -25,7 +24,9 @@ impl<T> Collection<T> {
     }
 
     pub fn find(&self, query: Query) -> Vec<Document<T>> {
-        let mut results = self.documents.iter()
+        let mut results = self
+            .documents
+            .iter()
             .filter(|doc| {
                 query.filter.iter().all(|(key, value)| {
                     doc.get_field_value(key)

@@ -32,7 +32,7 @@ impl<'a> StorageGraphMemory<'a> {
         ron::ser::to_writer(ron_file, &graph)?;
 
         let bin_file = BufWriter::new(File::create(format!("{}/{}.bin", base_path, MEMORY_FILENAME))?);
-        bincode::serialize_into(bin_file, &graph)?;
+        bincode_next::encode_into_std_write(&graph, &mut bin_file, bincode_next::config::standard())?;
 
         Ok(())
     }
@@ -44,7 +44,7 @@ impl<'a> StorageGraphMemory<'a> {
         let bin_path = format!("{}/{}.bin", base_path, MEMORY_FILENAME);
         if Path::new(&bin_path).exists() {
             let reader = BufReader::new(File::open(&bin_path)?);
-            let graph: SerializableGraph = bincode::deserialize_from(reader)?;
+            let graph: SerializableGraph = bincode_next::decode_from_std_read(&mut reader, bincode_next::config::standard())?;
             self.restore_from_serializable(graph);
             return Ok(());
         }

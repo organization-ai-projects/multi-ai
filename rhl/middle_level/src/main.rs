@@ -1,18 +1,11 @@
 // Modules internes du projet
-mod types;
-mod formats;
-mod transpiler;
-mod utils;
-mod type_parser;
-mod linter;
-mod ast;  // Ajout du module ast ici
+use middle_level::transpiler::{list_dsl_files, transpile_file};
+use middle_level::utils::get_project_root;
+use middle_level::types::Format;
+use middle_level::linter::DslLinter;
 
 use std::env;
 use std::path::Path;
-use crate::transpiler::{list_dsl_files, transpile_file};
-use crate::utils::get_project_root;
-use crate::types::Format;
-use crate::linter::DslLinter;
 
 /// Documentation pour la transpilation
 fn main() -> Result<(), Box<dyn std::error::Error>> {

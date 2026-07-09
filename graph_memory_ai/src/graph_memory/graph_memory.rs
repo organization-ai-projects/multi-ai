@@ -2,21 +2,21 @@ use serde::{Serialize, Deserialize};
 use std::collections::HashMap;
 use std::fs;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 pub struct Node {
     pub id: String,
     pub label: String,
     pub properties: HashMap<String, String>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 pub struct Edge {
     pub from: String,
     pub to: String,
     pub label: String,
 }
 
-#[derive(Debug, Serialize, Deserialize, Default)]
+#[derive(Debug, Serialize, Deserialize, Default, bincode_next::Encode, bincode_next::Decode)]
 pub struct GraphMemory {
     pub nodes: Vec<Node>,
     pub edges: Vec<Edge>,
@@ -30,7 +30,7 @@ impl GraphMemory {
     }
 
     pub fn save_bin(&self, path: &str) -> Result<(), String> {
-        let bin = bincode::serialize(self).map_err(|e| format!("Erreur bincode: {}", e))?;
+        let bin = bincode_next::encode_to_vec(self, bincode_next::config::standard()).map_err(|e| format!("Erreur bincode: {}", e))?;
         fs::write(path, bin).map_err(|e| format!("Erreur écriture: {}", e))
     }
 
@@ -41,7 +41,7 @@ impl GraphMemory {
 
     pub fn load_bin(path: &str) -> Result<Self, String> {
         let content = fs::read(path).map_err(|e| format!("Erreur lecture: {}", e))?;
-        bincode::deserialize(&content).map_err(|e| format!("Erreur parsing bincode: {}", e))
+        bincode_next::decode_from_slice(&content, bincode_next::config::standard()).map(|(v, _)| v).map_err(|e| format!("Erreur parsing bincode: {}", e))
     }
 
     pub fn add_or_update_node(&mut self, node: Node) {

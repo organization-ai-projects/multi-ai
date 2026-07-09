@@ -2,21 +2,21 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::path::Path;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 pub enum EvictionStrategy {
     LRU,
     FIFO,
     Custom(String),
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 pub enum FlushPolicy {
     Interval(u64),
     OnThreshold(usize),
     OnTransaction,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 pub struct CachePolicy {
     pub entity_actions: HashMap<String, Vec<String>>, // entité -> actions permises
     pub max_cache_size: usize,

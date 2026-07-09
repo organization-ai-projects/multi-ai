@@ -48,7 +48,7 @@ impl Mutation {
 
     fn random_mutation_type() -> MutationType {
         use rand::Rng;
-        match rand::thread_rng().gen_range(0..4) {
+        match rand::rng().random_range(0..4) {
             0 => MutationType::Substitution,
             1 => MutationType::Truncation,
             2 => MutationType::Extension,
@@ -60,8 +60,8 @@ impl Mutation {
         let chars: Vec<char> = molecule.chars().collect();
         if chars.is_empty() { return None; }
         
-        let mut rng = rand::thread_rng();
-        let pos = rng.gen_range(0..chars.len());
+        let mut rng = rand::rng();
+        let pos = rng.random_range(0..chars.len());
         let new_char = ['_', 'x', 'n', 't'].choose(&mut rng)?;
         
         let mut new_mol = chars;
@@ -72,14 +72,14 @@ impl Mutation {
     fn truncate(molecule: &str) -> Option<String> {
         // Raccourcit la molécule
         if molecule.len() <= 1 { return None; }
-        let pos = rand::thread_rng().gen_range(1..molecule.len());
+        let pos = rand::rng().random_range(1..molecule.len());
         Some(molecule[0..pos].to_string())
     }
 
     fn extend(molecule: &str) -> Option<String> {
         // Ajoute des caractères à la molécule
         let suffixes = ["_new", "able", "mut", "_t"];
-        suffixes.choose(&mut rand::thread_rng())
+        suffixes.choose(&mut rand::rng())
             .map(|s| format!("{}{}", molecule, s))
     }
 }

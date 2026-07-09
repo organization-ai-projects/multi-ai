@@ -1,4 +1,4 @@
-use crate::monitoring::{HealthMonitor, MetricsCollector, AlertSystem};
+use crate::human::monitoring::{HealthMonitor, MetricsCollector, AlertSystem};
 use serde_json::json;
 use std::time::Instant;
 use tokio;

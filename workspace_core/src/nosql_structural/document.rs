@@ -6,7 +6,7 @@ use super::references::DbRef;
 use std::convert::From;
 use std::time::{SystemTime, UNIX_EPOCH};
 
-#[derive(Debug, Deserialize, Serialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, bincode_next::Encode, bincode_next::Decode)]
 pub struct Document<T> {
     pub _id: Uuid,
     pub created_at: i64,

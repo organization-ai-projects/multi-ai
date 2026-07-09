@@ -1,6 +1,5 @@
-use metrics::{counter, gauge, histogram};
-use std::time::Instant;
 use std::sync::Arc;
+use std::time::Instant;
 
 pub struct DatabaseMetrics {
     query_timer: Arc<Instant>,
@@ -9,7 +8,7 @@ pub struct DatabaseMetrics {
 impl DatabaseMetrics {
     pub fn new() -> Self {
         Self {
-            query_timer: Arc::new(Instant::now())
+            query_timer: Arc::new(Instant::now()),
         }
     }
 

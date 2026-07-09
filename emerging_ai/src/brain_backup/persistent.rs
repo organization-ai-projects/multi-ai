@@ -17,7 +17,7 @@ pub use persistents::nodes::*;
 pub use persistents::episodes::*;
 pub use persistents::artifacts::*;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, bincode_next::Encode, bincode_next::Decode)]
 pub struct PersistentMemoryGraph {
     pub nodes: HashMap<Uuid, MemoryNode>,
     pub edges: Vec<(Uuid, Uuid, MemoryEdge)>,
@@ -45,12 +45,12 @@ impl PersistentMemoryGraph {
 
     pub fn save_bin(&self, path: &str) {
         let file = File::create(path).expect("Could not create bin file");
-        bincode::serialize_into(file, self).expect("Could not serialize bin");
+        bincode_next::encode_into_std_write(self, &mut file, bincode_next::config::standard()).expect("Could not serialize bin");
     }
 
     pub fn load_bin(path: &str) -> Self {
         let file = File::open(path).expect("Could not open bin file");
-        bincode::deserialize_from(file).expect("Could not deserialize bin")
+        bincode_next::decode_from_std_read(&mut file, bincode_next::config::standard()).expect("Could not deserialize bin")
     }
 
     pub fn save_ron(&self, path: &str) {
@@ -81,7 +81,7 @@ impl PersistentMemoryGraph {
     }
 
     pub fn pick_random_snippet(&self) -> Option<(String, Uuid)> {
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         self.nodes.values().filter_map(|node| {
             if let NodeType::SourceSnippet { code, .. } = &node.kind {
                 Some((code.clone(), node.id))

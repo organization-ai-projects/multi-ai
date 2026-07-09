@@ -120,7 +120,7 @@ enum GoalAnalysis {
     Normal,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, bincode_next::Encode, bincode_next::Decode)]
 struct Goal {
     uuid: Uuid,
     goal_type: String,

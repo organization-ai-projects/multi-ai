@@ -11,7 +11,7 @@ use std::fs;
 use std::time::Duration;
 use tokio::time::sleep;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 pub struct ExplorerState {
     pub queue: VecDeque<String>,
     pub graph: KnowledgeGraph,
@@ -55,7 +55,7 @@ async fn main() {
             tried_urls.push(url.clone());
 
             // b. Essayer tous les parseurs en random order
-            strategies.shuffle(&mut rand::thread_rng());
+            strategies.shuffle(&mut rand::rng());
             let mut found = false;
             for strat in &strategies {
                 match strat.scrape_and_parse(&url).await {

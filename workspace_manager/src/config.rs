@@ -3,7 +3,7 @@ use std::fs;
 use std::path::PathBuf; // Supprimer `Path` car il n'est pas utilisé
 use serde::{Deserialize, Serialize}; // Ajout des imports manquants
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, bincode_next::Encode, bincode_next::Decode)]
 pub struct ProjectConfig {
     pub name: String,
     pub mode: Option<String>,

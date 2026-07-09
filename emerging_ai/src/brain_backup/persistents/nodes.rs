@@ -20,13 +20,13 @@ impl NodeManager {
     /// Sauvegarde le graphe en format binaire
     pub fn save_bin(&self, path: &str) {
         let file = File::create(path).expect("Could not create bin file");
-        bincode::serialize_into(file, &self.graph).expect("Could not serialize bin");
+        bincode_next::encode_into_std_write(&self.graph, &mut file, bincode_next::config::standard()).expect("Could not serialize bin");
     }
 
     /// Charge le graphe depuis un fichier binaire
     pub fn load_bin(&mut self, path: &str) {
         let file = File::open(path).expect("Could not open bin file");
-        self.graph = bincode::deserialize_from(file).expect("Could not deserialize bin");
+        self.graph = bincode_next::decode_from_std_read(&mut file, bincode_next::config::standard()).expect("Could not deserialize bin");
     }
 
     /// Sauvegarde le graphe en format RON

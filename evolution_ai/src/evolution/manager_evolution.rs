@@ -61,7 +61,7 @@ impl EvolutionManager {
 
     /// Ajoute de nouveaux individus à la population en utilisant des mutations sur des individus existants.
     pub fn add_diversity(&mut self, population: &mut Vec<String>, num_new_individuals: usize) {
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         for _ in 0..num_new_individuals {
             if let Some(base_individual) = population.choose(&mut rng) {
                 // Utiliser MutationManager pour muter un individu existant
@@ -110,7 +110,7 @@ impl EvolutionManager {
 
     /// Déclenche une catastrophe globale qui réduit la population.
     pub fn trigger_catastrophe(&mut self, population: &mut Vec<String>, survival_rate: f64) {
-        let mut rng = rand::thread_rng();
-        population.retain(|_| rng.gen_bool(survival_rate));
+        let mut rng = rand::rng();
+        population.retain(|_| rng.random_bool(survival_rate));
     }
 }

@@ -1,7 +1,7 @@
 use serde::{Serialize, Deserialize};
 use crate::execution::ExecutionResult;
 
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, bincode_next::Encode, bincode_next::Decode)]
 pub struct LifeForm {
     pub id: String,
     pub birth_time: i64,
@@ -13,7 +13,7 @@ pub struct LifeForm {
     pub parent_id: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, bincode_next::Encode, bincode_next::Decode)]
 pub enum State {
     Alive,
     Dead,

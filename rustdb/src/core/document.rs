@@ -1,10 +1,9 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use uuid::Uuid;
-use super::references::DbRef;
 use std::time::{SystemTime, UNIX_EPOCH};
+use uuid::Uuid;
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, bincode_next::Encode, bincode_next::Decode)]
 pub struct Document<T> {
     pub _id: Uuid,
     pub created_at: i64,
@@ -37,16 +36,14 @@ pub trait DocumentAccess {
 impl<T: Serialize> DocumentAccess for Document<T> {
     fn get_field_value(&self, field: &str) -> Option<String> {
         match serde_json::to_value(&self.data) {
-            Ok(Value::Object(map)) => {
-                map.get(field).and_then(|v| match v {
-                    Value::String(s) => Some(s.clone()),
-                    Value::Number(n) => Some(n.to_string()),
-                    Value::Bool(b) => Some(b.to_string()),
-                    Value::Array(a) => Some(serde_json::to_string(a).unwrap_or_default()),
-                    _ => None,
-                })
-            },
-            _ => None
+            Ok(Value::Object(map)) => map.get(field).and_then(|v| match v {
+                Value::String(s) => Some(s.clone()),
+                Value::Number(n) => Some(n.to_string()),
+                Value::Bool(b) => Some(b.to_string()),
+                Value::Array(a) => Some(serde_json::to_string(a).unwrap_or_default()),
+                _ => None,
+            }),
+            _ => None,
         }
     }
 }

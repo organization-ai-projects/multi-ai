@@ -1,7 +1,7 @@
 use serde::{Serialize, Deserialize};
 use reqwest::Client;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 pub struct WebhookPayload {
     pub project: String,
     pub version: String,

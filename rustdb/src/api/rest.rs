@@ -1,11 +1,9 @@
 use axum::{
     Router,
-    routing::{get, post},
-    extract::{Path, State, Json},
+    extract::{Json, Path, State},
     response::IntoResponse,
+    routing::{get, post},
 };
-use super::Database;
-use crate::core::{Document, Query, Result};
 
 pub fn create_router(db: Database) -> Router {
     Router::new()
@@ -15,10 +13,7 @@ pub fn create_router(db: Database) -> Router {
         .with_state(db)
 }
 
-async fn get_collection(
-    State(db): State<Database>,
-    Path(name): Path<String>,
-) -> impl IntoResponse {
+async fn get_collection(State(db): State<Database>, Path(name): Path<String>) -> impl IntoResponse {
     // Utilise l'API pour accéder aux données
     db.get_collection(&name).await
 }

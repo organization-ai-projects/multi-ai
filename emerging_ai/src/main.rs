@@ -1,8 +1,8 @@
 mod ai;
 mod human;
 
-use crate::orchestrator::Orchestrator;
-use crate::human_orchestrator::HumanOrchestrator;
+use crate::ai::orchestrator::Orchestrator;
+use crate::human::human_orchestrator::HumanOrchestrator;
 use ctrlc;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;

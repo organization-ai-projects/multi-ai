@@ -1,10 +1,10 @@
-use bincode::{deserialize, serialize};
+
 use std::fs::File;
 use std::io::{Read, Write};
 
 impl Population {
     pub fn save_bincode(&self, path: &str) -> std::io::Result<()> {
-        let encoded = serialize(self).unwrap();
+        let encoded = bincode_next::encode_to_vec(self, bincode_next::config::standard()).unwrap();
         let mut file = File::create(path)?;
         file.write_all(&encoded)?;
         Ok(())
@@ -14,6 +14,6 @@ impl Population {
         let mut file = File::open(path)?;
         let mut buf = Vec::new();
         file.read_to_end(&mut buf)?;
-        Ok(deserialize(&buf).unwrap())
+        Ok(bincode_next::decode_from_slice(&buf, bincode_next::config::standard()).map(|(v, _)| v).unwrap())
     }
 }

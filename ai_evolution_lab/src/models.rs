@@ -1,20 +1,20 @@
 use serde::{Deserialize, Serialize};
 use chrono;
 
-#[derive(Deserialize, Serialize)]  // Ajout de Serialize
+#[derive(Deserialize, Serialize, bincode_next::Encode, bincode_next::Decode)]  // Ajout de Serialize
 pub struct IaList {
     pub nature: Vec<String>,
     pub scientist: Vec<String>,
     pub life_form: Vec<String>,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 pub struct IaMetadata {
     pub id: String,
     pub kind: String,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 pub struct GlobalMetadata {
     pub version: u32,
     pub last_run: String,

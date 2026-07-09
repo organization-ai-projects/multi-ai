@@ -4,4 +4,4 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-tiny-http = "0.12"
+tiny_http = "0.12"

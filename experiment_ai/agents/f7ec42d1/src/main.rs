@@ -2,7 +2,7 @@ use std::{fs, io};
 use rand::{thread_rng, Rng}; 
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 struct Objective {
     name: String,
     success_count: u32,  // Changé en u32 car toujours positif
@@ -16,7 +16,7 @@ struct LogEntry {
     details: Option<String>,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 struct Objectives {
     objectives: Vec<Objective>
 }
@@ -25,11 +25,11 @@ const OBJECTIVES_RON: &str = "goals/objectives.ron";
 const OBJECTIVES_BIN: &str = "goals/objectives.bin";
 
 fn main() -> io::Result<()> {
-    let mut rng = thread_rng();
+    let mut rng = rng();
 
     loop {
         // Génère du contenu totalement aléatoire
-        let size = rng.gen_range(1..1000); // Taille aléatoire
+        let size = rng.random_range(1..1000); // Taille aléatoire
         let content: String = (0..size)
             .map(|_| {
                 // Mélange de tous les caractères possibles
@@ -40,19 +40,19 @@ fn main() -> io::Result<()> {
                     b"\n\t ".to_vec(),              // Whitespace
                 ].concat();
                 
-                choices[rng.gen_range(0..choices.len())] as char
+                choices[rng.random_range(0..choices.len())] as char
             })
             .collect();
 
         // Choisit une extension aléatoire
         let ext = [
             "rs", "toml", "ron", "bin", "", "txt", "json"
-        ][rng.gen_range(0..7)];
+        ][rng.random_range(0..7)];
 
         // Crée un chemin aléatoire (pour tester la sécurité)
         let dirs = ["", ".", "..", "src", "sandbox", "../sandbox"];
         let path = format!("{}/{}.{}", 
-            dirs[rng.gen_range(0..dirs.len())],
+            dirs[rng.random_range(0..dirs.len())],
             rng.gen::<u64>(),
             ext
         );
@@ -95,7 +95,7 @@ fn main() -> io::Result<()> {
                         fs::write(OBJECTIVES_RON, ron_string)?;
                         
                         // Sauvegarde en binaire uniquement pour l'IA
-                        let bin_content = bincode::serialize(&state.objectives)
+                        let bin_content = bincode_next::encode_to_vec(&state.objectives, bincode_next::config::standard())
                             .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))?;
                         fs::write(OBJECTIVES_BIN, bin_content)?;
                     }

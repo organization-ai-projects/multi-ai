@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 // Un pipeline (= stratégie candidate)
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Clone, Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 pub struct Strategy {
     pub pipeline: Vec<crate::primitive::Primitive>, // Utilisé uniquement via Experiment
     pub ancestry: Vec<String>,                      // Historique des mutations
@@ -20,16 +20,16 @@ impl Strategy {
     }
 
     pub fn mutate(&self) -> Self {
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         let mut new_pipeline = self.pipeline.clone();
 
-        match rng.gen_range(0..4) {
+        match rng.random_range(0..4) {
             0 if new_pipeline.len() > 1 => {
-                new_pipeline.remove(rng.gen_range(0..new_pipeline.len()));
+                new_pipeline.remove(rng.random_range(0..new_pipeline.len()));
             }
             1 => {
                 new_pipeline.insert(
-                    rng.gen_range(0..=new_pipeline.len()),
+                    rng.random_range(0..=new_pipeline.len()),
                     crate::primitive::Primitive::random(),
                 );
             }
@@ -39,7 +39,7 @@ impl Strategy {
                 }
             }
             3 => {
-                if rng.gen_bool(0.2) {
+                if rng.random_bool(0.2) {
                     new_pipeline.push(crate::primitive::Primitive::Custom(
                         "new_dynamic_op".to_string(),
                     ));

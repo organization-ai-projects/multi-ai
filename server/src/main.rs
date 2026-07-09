@@ -11,7 +11,7 @@ fn main() {
         match std::fs::read_to_string(&path) {
             Ok(content) => {
                 let response = Response::from_string(content)
-                    .with_header("Content-Type: text/plain".parse().unwrap());
+                    .with_header("Content-Type: text/plain".parse::<tiny_http::Header>().unwrap());
                 request.respond(response).unwrap();
             }
             Err(_) => {

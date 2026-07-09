@@ -1,10 +1,7 @@
-use rustdb::api::Database;
 use crate::schema::ProjectDocument;
 use ron::de::from_str;
 use std::fs;
 use std::path::{Path, PathBuf};
-use uuid::Uuid;
-use std::time::{SystemTime, UNIX_EPOCH};
 
 pub struct ScannedProject {
     pub path: PathBuf,

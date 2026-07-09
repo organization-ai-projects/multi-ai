@@ -2,7 +2,7 @@
 
 use serde::{Serialize, Deserialize};
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, bincode_next::Encode, bincode_next::Decode)]
 pub(crate) struct Link {
     pub(crate) source: String,
     pub(crate) target: String,

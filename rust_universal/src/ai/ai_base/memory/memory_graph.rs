@@ -5,14 +5,14 @@ use super::nodes_manager::NodesManager;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, bincode_next::Encode, bincode_next::Decode)]
 pub enum MemoryTerm {
     ShortTerm,
     MediumTerm,
     LongTerm,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 pub struct MemoryGraph {
     pub nodes: NodesManager,
     pub links: LinksManager,

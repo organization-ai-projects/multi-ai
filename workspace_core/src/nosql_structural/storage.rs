@@ -1,5 +1,5 @@
 use super::collections::Collection;
-use bincode::{serialize, deserialize};
+
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::time::SystemTime;
@@ -23,7 +23,7 @@ impl StorageManager {
             .map_err(|e| format!("Erreur écriture RON : {}", e))?;
 
         // Sauvegarde binaire (pour le système)
-        let bin_content = serialize(collection)
+        let bin_content = bincode_next::encode_to_vec(collection, bincode_next::config::standard())
             .map_err(|e| format!("Erreur sérialisation binaire : {}", e))?;
         let bin_path = self.base_path.join(format!("{}.bin", collection.name));
         fs::write(&bin_path, bin_content)
@@ -56,7 +56,7 @@ impl StorageManager {
         } else {
             let content = fs::read(&path)
                 .map_err(|e| format!("Erreur lecture : {}", e))?;
-            deserialize(&content)
+            bincode_next::decode_from_slice(&content, bincode_next::config::standard()).map(|(v, _)| v)
                 .map_err(|e| format!("Erreur désérialisation binaire : {}", e))
         }
     }
@@ -75,7 +75,7 @@ impl StorageManager {
     // Synchronise le binaire depuis le RON
     fn sync_binary_from_ron<T: serde::de::DeserializeOwned + serde::Serialize>(&self, collection_name: &str) -> Result<(), String> {
         let collection = self.load::<T>(collection_name, true)?;
-        let bin_content = serialize(&collection)
+        let bin_content = bincode_next::encode_to_vec(&collection, bincode_next::config::standard())
             .map_err(|e| format!("Erreur sérialisation binaire : {}", e))?;
         let bin_path = self.base_path.join(format!("{}.bin", collection_name));
         fs::write(bin_path, bin_content)

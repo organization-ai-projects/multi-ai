@@ -2,7 +2,7 @@ use dialoguer::{theme::ColorfulTheme, Select};
 use std::path::PathBuf;
 use serde::{Serialize, Deserialize};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, bincode_next::Encode, bincode_next::Decode)]
 pub enum LearningMode {
     Local,
     Collaborative

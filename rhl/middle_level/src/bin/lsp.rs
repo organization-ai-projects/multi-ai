@@ -1,10 +1,11 @@
-use tower_lsp::lsp_types::*;
-use tower_lsp::{Client, LanguageServer, LspService, Server};
 use std::fs;
 use std::path::Path;
+use tower_lsp::lsp_types::*;
+use tower_lsp::{Client, LanguageServer, LspService, Server};
 
-use middle_level::types::{Format, TypesMapping};
 use middle_level::linter::DslLinter;
+use middle_level::types::Format;
+use middle_level::type_parser::TypesMapping;
 
 struct Backend {
     client: Client,
@@ -14,10 +15,15 @@ struct Backend {
 
 #[tower_lsp::async_trait]
 impl LanguageServer for Backend {
-    async fn initialize(&self, _: InitializeParams) -> tower_lsp::jsonrpc::Result<InitializeResult> {
+    async fn initialize(
+        &self,
+        _: InitializeParams,
+    ) -> tower_lsp::jsonrpc::Result<InitializeResult> {
         Ok(InitializeResult {
             capabilities: ServerCapabilities {
-                text_document_sync: Some(TextDocumentSyncCapability::Kind(TextDocumentSyncKind::FULL)),
+                text_document_sync: Some(TextDocumentSyncCapability::Kind(
+                    TextDocumentSyncKind::FULL,
+                )),
                 ..Default::default()
             },
             ..Default::default()
@@ -25,16 +31,20 @@ impl LanguageServer for Backend {
     }
 
     async fn initialized(&self, _: InitializedParams) {
-        self.client.log_message(MessageType::INFO, "RHL LSP prêt 🚀").await;
+        self.client
+            .log_message(MessageType::INFO, "RHL LSP prêt 🚀")
+            .await;
     }
 
     async fn did_open(&self, params: DidOpenTextDocumentParams) {
-        self.handle_lint(params.text_document.uri, params.text_document.text).await;
+        self.handle_lint(params.text_document.uri, params.text_document.text)
+            .await;
     }
 
     async fn did_change(&self, params: DidChangeTextDocumentParams) {
         if let Some(change) = params.content_changes.get(0) {
-            self.handle_lint(params.text_document.uri, change.text.clone()).await;
+            self.handle_lint(params.text_document.uri, change.text.clone())
+                .await;
         }
     }
 
@@ -63,7 +73,9 @@ impl Backend {
             })
             .collect();
 
-        self.client.publish_diagnostics(uri, diagnostics, None).await;
+        self.client
+            .publish_diagnostics(uri, diagnostics, None)
+            .await;
     }
 }
 

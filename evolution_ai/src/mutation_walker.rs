@@ -55,8 +55,8 @@ impl MutationWalker {
     }
 
     fn maybe_create_module(&self, dir: &Path) -> std::io::Result<()> {
-        let mut rng = rand::thread_rng();
-        if rng.gen_bool(0.1) {
+        let mut rng = rand::rng();
+        if rng.random_bool(0.1) {
             // 10% de chance de créer un nouveau module
             let module_name = self.generate_module_name();
             let new_file = dir.join(format!("{}.rs", module_name));
@@ -67,10 +67,10 @@ impl MutationWalker {
 
     fn mutate_rust_file(&self, path: &Path) -> std::io::Result<()> {
         let content = fs::read_to_string(path)?;
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
 
         // 30% de chance d'ajouter un use d'un autre module
-        if rng.gen_bool(0.3) {
+        if rng.random_bool(0.3) {
             let mutated = self.add_module_usage(&content);
             fs::write(path, mutated)?;
         } else {
@@ -135,12 +135,12 @@ impl MutationWalker {
     }
 
     fn generate_module_name(&self) -> String {
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         let prefix = ["util", "core", "helper", "process", "data"];
         format!(
             "{}_{}",
-            prefix[rng.gen_range(0..prefix.len())],
-            rng.gen_range(0..999)
+            prefix[rng.random_range(0..prefix.len())],
+            rng.random_range(0..999)
         )
     }
 
@@ -159,7 +159,7 @@ impl MutationWalker {
         if let Some(module) = self.known_modules.iter().next() {
             // Trouver les fonctions publiques disponibles dans le module cible
             if let Ok(funcs) = self.discover_public_functions(module) {
-                let mut rng = rand::thread_rng();
+                let mut rng = rand::rng();
                 let mut lines: Vec<_> = content.lines().collect();
 
                 // Ajouter le use
@@ -168,7 +168,7 @@ impl MutationWalker {
                 // Insérer des appels aux fonctions à des positions aléatoires
                 if !funcs.is_empty() {
                     // Nombre d'appels à insérer (1 à 3)
-                    let num_calls = rng.gen_range(1..=3);
+                    let num_calls = rng.random_range(1..=3);
                     for _ in 0..num_calls {
                         let func = funcs.choose(&mut rng).unwrap();
                         let call = self.generate_function_call(module, func);
@@ -215,8 +215,8 @@ impl MutationWalker {
     }
 
     fn generate_function_call(&self, module: &str, func: &str) -> String {
-        let mut rng = rand::thread_rng();
-        match rng.gen_range(0..3) {
+        let mut rng = rand::rng();
+        match rng.random_range(0..3) {
             0 => format!("    let _ = {}::{}();", module, func),
             1 => format!("    if let Ok(_) = {}::{}() {{ }}", module, func),
             _ => format!("    {}::{}().unwrap_or_default();", module, func),
@@ -241,7 +241,7 @@ impl MutationWalker {
         if valid_positions.is_empty() {
             None
         } else {
-            Some(valid_positions[rng.gen_range(0..valid_positions.len())])
+            Some(valid_positions[rng.random_range(0..valid_positions.len())])
         }
     }
 }

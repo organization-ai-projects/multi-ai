@@ -37,11 +37,11 @@ impl Population {
     }
 
     pub fn crossover(&self, parent1: &Strategy, parent2: &Strategy) -> Strategy {
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         let mut pipeline = vec![];
         let min_len = usize::min(parent1.pipeline.len(), parent2.pipeline.len());
         for i in 0..min_len {
-            if rng.gen_bool(0.5) {
+            if rng.random_bool(0.5) {
                 pipeline.push(parent1.pipeline[i].clone());
             } else {
                 pipeline.push(parent2.pipeline[i].clone());
@@ -59,7 +59,7 @@ impl Population {
 
     pub fn next_generation(&mut self, survivor_ratio: f64, mutation_rate: f64) {
         let survivors = self.select(survivor_ratio);
-        let mut rng = thread_rng();
+        let mut rng = rng();
         let mut new_individuals = survivors.clone();
 
         // Générer de nouveaux individus par crossover + mutation
@@ -67,7 +67,7 @@ impl Population {
             let parents = survivors.choose_multiple(&mut rng, 2).collect::<Vec<_>>();
             if parents.len() == 2 {
                 let mut child = self.crossover(parents[0], parents[1]);
-                if rng.gen_bool(mutation_rate) {
+                if rng.random_bool(mutation_rate) {
                     child = child.mutate();
                 }
                 new_individuals.push(child);

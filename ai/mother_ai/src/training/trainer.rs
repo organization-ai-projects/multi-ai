@@ -11,7 +11,7 @@ pub fn execute_training(data: &str) -> Result<String, String> {
         TrainingKind::Audio,
     ];
 
-    let mut rng = rand::thread_rng();
+    let mut rng = rand::rng();
     let selected = kinds
         .choose(&mut rng)
         .ok_or("Aucune stratégie disponible")?;
