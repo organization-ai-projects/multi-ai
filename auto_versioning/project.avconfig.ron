@@ -1,0 +1,28 @@
+(
+    patterns: [
+        (
+            match_str: "pub trait",
+            impact: "major",
+            description: "Nouvelle API publique"
+        ),
+    ],
+    exclude: [
+        "target/*",
+        "tests/*",
+    ],
+    post_publish: [
+        (
+            cmd: "cargo",
+            args: ["doc"],
+            condition: "on_success"
+        ),
+    ],
+    authors: [
+        (
+            github: "organization/team-core",
+            cargo: "cargo-team-name"
+        ),
+    ],
+    cache_dir: ".av-cache",
+    publish_targets: ["Crates", "GitHub"],
+)
