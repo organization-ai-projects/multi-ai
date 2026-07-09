@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>IDE Web IA</title>
+  <style>
+    html, body { height: 100%; margin: 0; display: flex; }
+    #file-list { width: 20%; background: #2e2e2e; color: white; overflow-y: auto; padding: 10px; }
+    #editor-container { flex: 1; display: flex; flex-direction: column; }
+    #editor { flex: 1; }
+    button { margin: 5px; }
+    .tab {
+      display: inline-block;
+      padding: 10px;
+      background: #444;
+      color: white;
+      margin-right: 5px;
+      cursor: pointer;
+    }
+    .tab:hover {
+      background: #555;
+    }
+  </style>
+</head>
+<body>
+  <div id="file-list"></div>
+  <div id="editor-container">
+    <div>
+      <button id="trigger-suggestion">💡 Demander une suggestion IA</button>
+      <button id="view-graph">📊 Voir le graphe</button>
+      <button id="revert-visual">↩️ Revert visuel</button>
+      <input id="ai-prompt" type="text" placeholder="Posez une question à l'IA..." />
+      <button id="send-prompt">Envoyer</button>
+    </div>
+    <div>
+      <button id="plugin-comment">📝 Auto-commenter</button>
+      <button id="plugin-format">✨ Auto-formater</button>
+      <button id="plugin-summarize">📄 Résumer</button>
+    </div>
+    <div id="tabs">
+      <!-- Onglets pour les fichiers ouverts -->
+    </div>
+    <div id="editor"></div>
+    <select id="language-selector">
+      <option value="rust">Rust</option>
+      <option value="javascript">JavaScript</option>
+      <option value="python">Python</option>
+      <option value="html">HTML</option>
+      <option value="css">CSS</option>
+    </select>
+  </div>
+  <script src="https://unpkg.com/monaco-editor@latest/min/vs/loader.js"></script>
+  <script>
+    require.config({ paths: { vs: "https://unpkg.com/monaco-editor@latest/min/vs" } });
+    require(["vs/editor/editor.main"], function () {
+      const editor = monaco.editor.create(document.getElementById("editor"), {
+        value: "// Aucun fichier chargé pour le moment...",
+        language: "rust",
+        theme: "vs-dark",
+      });
+
+      const tabs = document.getElementById("tabs");
+      const languageSelector = document.getElementById("language-selector");
+      const openFiles = new Map(); // Map pour gérer les fichiers ouverts
+
+      // Charger un fichier réel dans l'éditeur
+      function loadFile(path) {
+        fetch(`/file/get/${path}`)
+          .then(res => res.json())
+          .then(data => {
+            if (!openFiles.has(path)) {
+              const tab = document.createElement("div");
+              tab.textContent = path;
+              tab.className = "tab";
+              tab.onclick = () => switchToFile(path);
+              tabs.appendChild(tab);
+              openFiles.set(path, data.content);
+            }
+            switchToFile(path);
+          })
+          .catch(err => alert("Erreur lors du chargement du fichier : " + err));
+      }
+
+      // Sauvegarder le contenu de l'éditeur dans un fichier
+      function saveFile(path) {
+        const content = editor.getValue();
+        fetch("/file/save", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ path, content }),
+        })
+          .then(res => res.json())
+          .then(data => {
+            if (data.success) {
+              alert(`✅ Fichier sauvegardé : ${path}`);
+            } else {
+              alert(`❌ Échec de la sauvegarde : ${path}`);
+            }
+          })
+          .catch(err => alert("Erreur lors de la sauvegarde : " + err));
+      }
+
+      // Changer de fichier dans l'éditeur
+      function switchToFile(path) {
+        if (openFiles.has(path)) {
+          editor.setValue(openFiles.get(path));
+          editor.onDidChangeModelContent(() => {
+            openFiles.set(path, editor.getValue());
+          });
+        }
+      }
+
+      // Changer le langage de programmation
+      languageSelector.addEventListener("change", () => {
+        const language = languageSelector.value;
+        monaco.editor.setModelLanguage(editor.getModel(), language);
+      });
+
+      // Charger la liste des fichiers au démarrage
+      loadFileList();
+
+      // WebSocket pour suggestions en temps réel
+      const ws = new WebSocket("ws://localhost:3000/ws/suggestions");
+      ws.onmessage = (event) => {
+        alert(`💡 Suggestion IA : ${event.data}`);
+      };
+
+      // Bouton pour demander une suggestion IA
+      document.getElementById("trigger-suggestion").addEventListener("click", () => {
+        fetch("/ws/trigger", { method: "POST" })
+          .catch(err => alert("Erreur lors de la demande de suggestion : " + err));
+      });
+
+      // Bouton pour afficher le graphe
+      document.getElementById("view-graph").addEventListener("click", () => {
+        fetch("/graph/ui")
+          .then(res => res.json())
+          .then(data => {
+            console.log("Graphe UI :", data);
+            alert("📊 Graphe chargé dans la console.");
+          })
+          .catch(err => alert("Erreur lors du chargement du graphe : " + err));
+      });
+
+      // Bouton pour effectuer un revert visuel
+      document.getElementById("revert-visual").addEventListener("click", () => {
+        const snapshotId = prompt("Entrez l'ID du snapshot à revert :");
+        if (snapshotId) {
+          fetch(`/revert/visual/${snapshotId}`, { method: "POST" })
+            .then(res => res.json())
+            .then(data => {
+              if (data.success) {
+                alert("↩️ Revert visuel effectué avec succès !");
+              } else {
+                alert("❌ Échec du revert visuel.");
+              }
+            })
+            .catch(err => alert("Erreur lors du revert visuel : " + err));
+        }
+      });
+
+      document.getElementById("send-prompt").addEventListener("click", () => {
+        const prompt = document.getElementById("ai-prompt").value;
+        fetch("/ai/prompt", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prompt }),
+        })
+          .then(res => res.json())
+          .then(data => alert(`Réponse IA : ${data.response}`))
+          .catch(err => alert("Erreur lors de l'envoi du prompt : " + err));
+      });
+
+      document.getElementById("plugin-comment").addEventListener("click", () => {
+        const content = editor.getValue();
+        fetch("/plugin/comment", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ path: "current_file.rs", content }),
+        })
+          .then(res => res.json())
+          .then(data => editor.setValue(data.content))
+          .catch(err => alert("Erreur lors de l'application du plugin : " + err));
+      });
+
+      document.getElementById("plugin-format").addEventListener("click", () => {
+        const content = editor.getValue();
+        fetch("/plugin/format", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ path: "current_file.rs", content }),
+        })
+          .then(res => res.json())
+          .then(data => editor.setValue(data.content))
+          .catch(err => alert("Erreur lors de l'application du plugin : " + err));
+      });
+
+      document.getElementById("plugin-summarize").addEventListener("click", () => {
+        const content = editor.getValue();
+        fetch("/plugin/summarize", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ path: "current_file.rs", content }),
+        })
+          .then(res => res.json())
+          .then(data => alert(data.content))
+          .catch(err => alert("Erreur lors de l'application du plugin : " + err));
+      });
+    });
+  </script>
+</body>
+</html>
