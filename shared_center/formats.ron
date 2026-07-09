@@ -1,0 +1,14 @@
+[
+    (
+        name: "ron",
+        extension: "ron",
+        serializer: "ron::ser::to_writer",
+        deserializer: "ron::de::from_reader",
+    ),
+    (
+        name: "bin",
+        extension: "bin",
+        serializer: "bincode::serialize_into",
+        deserializer: "bincode::deserialize_from",
+    ),
+]
