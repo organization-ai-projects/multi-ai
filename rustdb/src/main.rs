@@ -1,13 +1,8 @@
 use tokio;
-use rustdb::RustDb;
+use crate::server::RustDbServer;
 
 #[tokio::main]
 async fn main() {
-    let db = RustDb::new();
-    
-    // Service qui écoute à la fois:
-    // - REST API
-    // - WebSocket
-    // - API Rust native
-    db.serve().await;
+    let server = RustDbServer::new("127.0.0.1:8080");
+    server.start().await;
 }
